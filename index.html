@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Brookdale Diner — Historic Brookdale Lodge | Brookdale, CA</title>
+<meta name="description" content="A 1950s-style American diner inside the Historic Brookdale Lodge. All-day breakfast, legendary burgers, hand-spun shakes — Brookdale, California." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23DC2626'/%3E%3Ctext y='46' x='6' font-size='32' fill='%23fff' font-family='Georgia' font-weight='900'%3EBD%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Playfair+Display+SC:wght@400;700;900&family=Karla:wght@300;400;500;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* =======================================================
+     BROOKDALE DINER — White walls, red booths, black floor
+     Inspired by the actual diner interior
+     ======================================================= */
+  :root{
+    --white:#ffffff;
+    --bg:#FFF8F0;          /* warm white — diner walls */
+    --bg-2:#FEF2F2;         /* faint red-tinted cream */
+    --bg-3:#FFEDD5;         /* warmer cream */
+    --red:#DC2626;          /* primary booth red */
+    --red-deep:#B91C1C;     /* hover/pressed */
+    --red-bright:#EF4444;   /* highlights */
+    --red-tint:rgba(220,38,38,.08);
+    --black:#0A0A0A;        /* checker-floor black */
+    --ink:#1f1a18;
+    --ink-2:#3f3835;
+    --grey:#6b6360;
+    --line:#e5dfd6;
+    --chrome:#dfe6ec;
+
+    /* z-index scale */
+    --z-nav:50;
+    --z-jukebox:60;
+    --z-nudge:55;
+    --z-modal:200;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Karla', system-ui, -apple-system, sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.6;
+    overflow-x:hidden;
+    font-size:17px;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{max-width:100%; display:block}
+  a{color:var(--red); text-decoration:none; transition:color .2s}
+  a:hover{color:var(--red-deep)}
+  button{font-family:inherit}
+  ::selection{ background:var(--red); color:var(--white) }
+
+  /* respect reduced motion */
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration: .01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* ===== UTILITY: CHECKER PATTERN (real diner floor) ===== */
+  .checker-strip{
+    height:32px;
+    background-image:
+      linear-gradient(45deg, var(--black) 25%, transparent 25%),
+      linear-gradient(-45deg, var(--black) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, var(--black) 75%),
+      linear-gradient(-45deg, transparent 75%, var(--black) 75%);
+    background-size:32px 32px;
+    background-position:0 0, 0 16px, 16px -16px, 16px 0;
+    background-color:var(--white);
+    border-top:3px solid var(--red);
+    border-bottom:3px solid var(--red);
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar{
+    background:var(--black);
+    color:var(--white);
+    text-align:center;
+    padding:9px 20px;
+    font-family:'Karla', sans-serif;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:3px;
+    text-transform:uppercase;
+  }
+  .topbar .star{ color:var(--red); margin:0 10px }
+
+  /* ===== NAV ===== */
+  nav{
+    position:sticky; top:0; z-index:var(--z-nav);
+    background:rgba(255,248,240,.96);
+    backdrop-filter:blur(10px);
+    border-bottom:2px solid var(--red);
+    padding:14px 28px;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:18px;
+  }
+  nav .logo{
+    font-family:'Playfair Display SC', serif;
+    font-weight:900;
+    color:var(--black);
+    font-size:22px;
+    letter-spacing:3px;
+    cursor:pointer;
+  }
+  nav .logo span{ color:var(--red) }
+  nav ul{ list-style:none; display:flex; gap:34px }
+  nav ul a{
+    color:var(--black);
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    font-size:13px; letter-spacing:2px;
+    padding:6px 0;
+    border-bottom:2px solid transparent;
+    transition: all .2s ease;
+    cursor:pointer;
+  }
+  nav ul a:hover{ color:var(--red); border-color:var(--red) }
+  nav .call-cta{
+    background:var(--red); color:var(--white);
+    padding:10px 22px;
+    border:2px solid var(--red);
+    border-radius:40px;
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    font-size:13px; letter-spacing:2px;
+    transition: all .2s ease;
+    cursor:pointer;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  nav .call-cta:hover{ background:var(--red-deep); border-color:var(--red-deep); color:var(--white); transform:translateY(-1px) }
+  nav .call-cta:focus-visible{ outline:3px solid var(--black); outline-offset:3px }
+  nav .call-cta svg{ width:14px; height:14px; flex-shrink:0 }
+  @media (max-width:880px){
+    nav ul{ display:none }
+    nav{ padding:12px 16px }
+    nav .call-cta{ padding:9px 16px; font-size:12px }
+  }
+
+  /* ===== HERO (split: type left, photo right, checker bottom) ===== */
+  .hero{
+    position:relative;
+    background:var(--bg);
+    overflow:hidden;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1.15fr 1fr;
+    min-height: calc(100vh - 86px);
+    align-items:stretch;
+  }
+  @media (max-width:980px){
+    .hero-grid{ grid-template-columns:1fr; min-height:auto }
+  }
+  .hero-left{
+    padding: 70px clamp(28px, 5vw, 80px) 60px;
+    display:flex; flex-direction:column; justify-content:center;
+    position:relative;
+  }
+  .hero-est{
+    font-family:'Karla', sans-serif;
+    font-weight:700;
+    color:var(--red);
+    letter-spacing:6px; font-size:12px;
+    text-transform:uppercase;
+    margin-bottom:20px;
+    display:flex; align-items:center; gap:14px;
+    animation:fade .9s .1s both;
+  }
+  .hero-est::before, .hero-est::after{
+    content:''; height:1px; background:var(--red); flex:1; max-width:50px;
+  }
+  .hero h1{
+    font-family:'Abril Fatface', serif;
+    font-weight:400;
+    font-size: clamp(64px, 9vw, 144px);
+    line-height:.92;
+    color:var(--red);
+    letter-spacing:-1px;
+    text-shadow:
+      4px 4px 0 var(--black),
+      8px 8px 0 rgba(0,0,0,.08);
+    animation: slam 1s cubic-bezier(.2,1.4,.4,1) .15s both;
+  }
+  .hero h1 .amp{
+    display:inline-block;
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    color:var(--black);
+    text-shadow:none;
+    font-size:.55em;
+    margin: 0 14px;
+    transform:translateY(-12px);
+  }
+  .hero-tag{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size: clamp(24px, 3vw, 36px);
+    color:var(--ink-2);
+    margin-top:14px;
+    animation:fade .9s .7s both;
+  }
+  .hero-meta{
+    margin-top:24px;
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    color:var(--ink);
+    font-size:13px;
+    letter-spacing:3px;
+    animation:fade .9s .9s both;
+  }
+  .hero-meta b{ color:var(--red) }
+  .hero-open{
+    margin-top:28px;
+    display:inline-flex; align-items:center; gap:10px;
+    padding:9px 20px;
+    background:var(--white);
+    border:2px solid var(--red);
+    border-radius:40px;
+    color:var(--black);
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    font-size:12px; letter-spacing:2px;
+    width:fit-content;
+    animation:fade .9s 1.1s both;
+  }
+  .hero-open .dot{
+    width:9px; height:9px; border-radius:50%;
+    background:var(--red);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .hero-ctas{
+    margin-top:32px; display:flex; gap:14px; flex-wrap:wrap;
+    animation:fade .9s 1.3s both;
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:9px;
+    cursor:pointer;
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    letter-spacing:2.5px; font-size:13px;
+    padding:14px 28px;
+    border:2px solid;
+    border-radius:40px;
+    transition: all .2s ease;
+    text-transform:uppercase;
+    min-height:44px;
+  }
+  .btn:focus-visible{ outline:3px solid var(--black); outline-offset:3px }
+  .btn-primary{ background:var(--red); color:var(--white); border-color:var(--red) }
+  .btn-primary:hover{ background:var(--red-deep); border-color:var(--red-deep); color:var(--white); transform:translateY(-2px); box-shadow:0 8px 24px rgba(220,38,38,.35) }
+  .btn-ghost{ background:var(--white); color:var(--black); border-color:var(--black) }
+  .btn-ghost:hover{ background:var(--black); color:var(--white); transform:translateY(-2px) }
+  .btn svg{ width:14px; height:14px }
+
+  .hero-burst{
+    position:absolute;
+    top:54px; right:-30px;
+    width:130px; height:130px;
+    transform:rotate(14deg);
+    pointer-events:none;
+    animation: spin-slow 18s linear infinite;
+  }
+  @media (max-width:980px){ .hero-burst{ display:none } }
+
+  .hero-right{
+    position:relative;
+    background-image:url('photos/photo1.jpg');
+    background-size:cover; background-position:center;
+    border-left:4px solid var(--red);
+    min-height: 380px;
+  }
+  @media (max-width:980px){
+    .hero-right{ border-left:none; border-top:4px solid var(--red); min-height:360px }
+  }
+  .hero-right::after{
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(135deg, rgba(255,248,240,.15) 0%, transparent 35%, rgba(220,38,38,.08) 100%);
+  }
+  .hero-photo-cap{
+    position:absolute; bottom:18px; right:18px;
+    background:var(--black); color:var(--white);
+    padding:8px 16px; border:2px solid var(--white);
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    font-size:11px; letter-spacing:3px;
+    z-index:2;
+  }
+
+  @keyframes fade{ from{opacity:0} to{opacity:1} }
+  @keyframes slam{
+    from{opacity:0; transform:translateY(-30px) scale(.95)}
+    to{opacity:1; transform:none}
+  }
+  @keyframes pulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(220,38,38,.5) }
+    50%{ box-shadow:0 0 0 10px rgba(220,38,38,0) }
+  }
+  @keyframes spin-slow{ to{ transform:rotate(374deg) } }
+
+  /* ===== SECTIONS ===== */
+  section{ padding: 100px 24px; position:relative }
+  .container{ max-width:1240px; margin:0 auto }
+  .eyebrow{
+    font-family:'Karla', sans-serif;
+    font-weight:700;
+    color:var(--red); letter-spacing:5px; font-size:12px;
+    text-transform:uppercase;
+    text-align:center; margin-bottom:18px;
+    display:flex; align-items:center; justify-content:center; gap:14px;
+  }
+  .eyebrow::before, .eyebrow::after{
+    content:''; height:1px; background:var(--red); width:50px;
+  }
+  .section-title{
+    font-family:'Abril Fatface', serif;
+    font-size: clamp(46px, 6.5vw, 84px);
+    text-align:center;
+    color:var(--black);
+    line-height:1;
+    margin-bottom:14px;
+    letter-spacing:-1px;
+  }
+  .section-title em{
+    font-family:'Caveat', cursive;
+    font-style:normal; font-weight:700;
+    color:var(--red);
+  }
+  .section-lede{
+    text-align:center;
+    max-width:680px; margin:0 auto 60px;
+    font-family:'Karla', sans-serif;
+    font-size:18px;
+    color:var(--ink-2);
+    line-height:1.6;
+  }
+
+  /* ===== HISTORY ===== */
+  .history{ background:var(--white) }
+  .history-grid{
+    display:grid; grid-template-columns: 1.2fr 1fr; gap:60px;
+    align-items:start;
+  }
+  @media (max-width:880px){ .history-grid{ grid-template-columns:1fr; gap:40px } }
+  .history-prose p{
+    font-size:17px; color:var(--ink); margin-bottom:20px;
+    line-height:1.75;
+  }
+  .history-prose b{ color:var(--red); font-weight:700 }
+  .pull-quote{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    font-size:30px; line-height:1.3;
+    color:var(--black);
+    border-left:4px solid var(--red);
+    padding:6px 0 6px 24px;
+    margin:30px 0;
+  }
+  .history-photo{
+    position:relative;
+    overflow:hidden;
+    border:4px solid var(--black);
+    box-shadow: 12px 12px 0 var(--red);
+  }
+  .history-photo img{
+    width:100%; height:480px; object-fit:cover;
+    transition: transform .8s ease;
+  }
+  .history-photo:hover img{ transform:scale(1.04) }
+  .history-photo .cap{
+    position:absolute; bottom:0; left:0; right:0;
+    background:rgba(10,10,10,.85); color:var(--white);
+    padding:14px 18px;
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    font-size:11px; letter-spacing:4px;
+    text-align:center;
+  }
+  .timeline{
+    list-style:none; margin-top:36px;
+    border-top:2px solid var(--black);
+  }
+  .timeline li{
+    padding:14px 0;
+    border-bottom:1px dashed var(--line);
+    display:grid; grid-template-columns: 110px 1fr; gap:16px;
+    align-items:baseline;
+  }
+  .timeline .y{ font-family:'Abril Fatface', serif; color:var(--red); font-size:22px }
+  .timeline .e{ font-size:16px; color:var(--ink-2) }
+  .guest-list{
+    list-style:none; columns:2; column-gap:30px;
+    margin-top:30px;
+    padding:24px; background:var(--bg-2);
+    border-left:4px solid var(--red);
+  }
+  .guest-list li{
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    font-size:14px; color:var(--black); padding:5px 0;
+    letter-spacing:1px;
+    break-inside:avoid;
+  }
+  .guest-list li::before{ content:'★ '; color:var(--red) }
+
+  /* ===== MENU ===== */
+  .menu{ background:var(--bg) }
+  .pill-row{
+    display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+    margin: 30px 0 16px;
+  }
+  .pill{
+    padding:13px 28px;
+    border:2px solid var(--black);
+    border-radius:40px;
+    background:var(--white);
+    color:var(--black);
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    letter-spacing:2.5px; font-size:13px;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition: all .2s ease;
+    min-height:44px;
+  }
+  .pill:hover{
+    background:var(--bg-2);
+    border-color:var(--red);
+    color:var(--red);
+    transform:translateY(-1px);
+  }
+  .pill:focus-visible{ outline:3px solid var(--red); outline-offset:3px }
+  .pill.active{
+    background:var(--red);
+    border-color:var(--red);
+    color:var(--white);
+    box-shadow: 0 6px 16px rgba(220,38,38,.3);
+  }
+  .pill-divider{
+    height:1px; background:var(--line);
+    max-width:900px; margin: 8px auto 24px;
+  }
+  .pill-row.sub .pill{
+    padding:9px 20px; font-size:11px; letter-spacing:2px;
+    border-width:1px;
+  }
+
+  .platos-label{
+    text-align:center;
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    color:var(--red);
+    letter-spacing:8px; font-size:14px;
+    margin: 30px 0 18px;
+    text-transform:uppercase;
+    display:flex; align-items:center; justify-content:center; gap:18px;
+  }
+  .platos-label::before, .platos-label::after{
+    content:''; height:1px; background:var(--red); width:60px;
+  }
+
+  .menu-note-bar{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-left:4px solid var(--red);
+    padding:18px 26px;
+    color:var(--ink-2);
+    font-style:italic;
+    font-size:16px;
+    margin: 0 auto 50px;
+    max-width:1100px;
+    line-height:1.5;
+  }
+  .menu-note-bar b{ color:var(--red); font-style:normal }
+
+  .menu-grid{
+    display:grid; grid-template-columns: 1fr 1fr;
+    gap: 0 80px;
+    max-width:1100px; margin:0 auto;
+  }
+  @media (max-width:760px){ .menu-grid{ grid-template-columns:1fr; gap:0 } }
+
+  .item{
+    padding:20px 12px;
+    border-bottom:1px dashed var(--line);
+    transition: background .2s ease, border-color .2s ease, padding-left .2s ease;
+    cursor:default;
+    border-radius:6px;
+  }
+  .item:hover{
+    background:var(--red-tint);
+    border-bottom-color:var(--red);
+    padding-left:18px;
+  }
+  .item-head{
+    display:flex; justify-content:space-between; align-items:baseline;
+    gap:14px; margin-bottom:6px;
+  }
+  .item-name{
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    color:var(--black);
+    font-size:17px; letter-spacing:1.5px;
+  }
+  .item-price{
+    font-family:'Abril Fatface', serif;
+    color:var(--red);
+    font-size:20px;
+    flex-shrink:0;
+    line-height:1;
+  }
+  .item-desc{
+    color:var(--ink-2);
+    font-family:'Karla', sans-serif;
+    font-size:15px; line-height:1.55;
+    font-style:italic;
+  }
+
+  .tab-panel{ display:none }
+  .tab-panel.active{ display:block; animation: fade .35s ease both }
+
+  .add-list{
+    margin-top:14px; padding:18px 22px;
+    background:var(--bg-2);
+    border:1px dashed var(--red);
+    font-family:'Karla', sans-serif;
+    font-size:14px; color:var(--ink-2);
+    line-height:2;
+    border-radius:6px;
+  }
+  .add-list b{ color:var(--red); font-weight:700 }
+
+  .menu-footer{
+    text-align:center; margin-top:50px;
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    color:var(--black);
+    letter-spacing:4px; font-size:13px;
+    text-transform:uppercase;
+    padding:20px;
+    border-top:2px solid var(--black);
+    border-bottom:2px solid var(--black);
+  }
+  .menu-footer .star{ color:var(--red); margin:0 12px }
+
+  /* ===== GALLERY ===== */
+  .gallery{ background:var(--bg-2) }
+  .gallery-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap:18px;
+  }
+  .gallery-item{
+    position:relative;
+    overflow:hidden;
+    aspect-ratio: 4/5;
+    background:var(--black);
+    cursor:zoom-in;
+    border:3px solid var(--black);
+    transition: transform .25s ease;
+  }
+  .gallery-item:hover{ transform:translateY(-4px) }
+  .gallery-item:focus-visible{ outline:3px solid var(--red); outline-offset:3px }
+  .gallery-item img{
+    width:100%; height:100%; object-fit:cover;
+    transition: transform .6s ease, filter .3s ease;
+  }
+  .gallery-item:hover img{ transform:scale(1.08) }
+  .gallery-item .cap{
+    position:absolute; bottom:0; left:0; right:0;
+    background: linear-gradient(0deg, rgba(0,0,0,.92), transparent);
+    color:var(--white);
+    padding:34px 16px 14px;
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    font-size:13px; letter-spacing:3px;
+    text-transform:uppercase;
+  }
+  .gallery-item .cap small{
+    display:block; color:var(--red-bright); font-size:10px; letter-spacing:3px; margin-top:3px; font-weight:700;
+  }
+
+  /* ===== VISIT ===== */
+  .visit{ background:var(--white) }
+  .visit-grid{
+    display:grid; grid-template-columns: 1fr 1fr; gap:50px;
+  }
+  @media (max-width:760px){ .visit-grid{ grid-template-columns:1fr } }
+  .panel{
+    background:var(--white);
+    border:3px solid var(--black);
+    padding:38px;
+    position:relative;
+    box-shadow: 8px 8px 0 var(--red);
+  }
+  .panel h3{
+    font-family:'Abril Fatface', serif;
+    color:var(--black); font-size:36px;
+    margin-bottom:24px;
+    letter-spacing:-.5px;
+  }
+  .hours-list{ list-style:none }
+  .hours-list li{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:16px;
+  }
+  .hours-list li:last-child{ border-bottom:none }
+  .hours-list .day{
+    font-family:'Playfair Display SC', serif;
+    font-weight:700; color:var(--black);
+    letter-spacing:1.5px; font-size:14px;
+  }
+  .hours-list .time{
+    color:var(--ink-2); font-family:'Karla', sans-serif;
+    font-weight:500;
+  }
+  .hours-list li.today{
+    background:var(--red); color:var(--white);
+    margin: 0 -12px; padding-left:14px; padding-right:14px;
+    border-radius:6px;
+    border-bottom:none;
+  }
+  .hours-list li.today .day, .hours-list li.today .time{ color:var(--white) }
+
+  .visit-info{ list-style:none; font-size:16px }
+  .visit-info li{
+    padding:14px 0;
+    border-bottom:1px dashed var(--line);
+    display:grid; grid-template-columns:110px 1fr; gap:18px; align-items:baseline;
+  }
+  .visit-info li:last-child{ border-bottom:none }
+  .visit-info .label{
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    color:var(--red); font-size:11px; letter-spacing:3px;
+    text-transform:uppercase;
+  }
+  .visit-info a{ color:var(--black); border-bottom:1px solid var(--red); font-weight:600 }
+  .visit-info a:hover{ color:var(--red) }
+
+  /* ===== FAMILY ===== */
+  .family{
+    background:var(--black);
+    color:var(--white);
+    text-align:center;
+  }
+  .family .section-title{ color:var(--white) }
+  .family .section-title em{ color:var(--red-bright) }
+  .family .eyebrow{ color:var(--red-bright) }
+  .family .eyebrow::before, .family .eyebrow::after{ background:var(--red-bright) }
+  .family .section-lede{ color:#d6cdbf }
+  .family p{
+    max-width:760px; margin:0 auto 22px;
+    font-size:17px; color:#d6cdbf;
+    line-height:1.7;
+  }
+  .family p b{ color:var(--red-bright); font-weight:700 }
+  .family .signature{
+    font-family:'Caveat', cursive;
+    font-weight:700;
+    color:var(--white); font-size:42px;
+    margin-top:30px;
+  }
+  .family .signature small{
+    display:block;
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    color:var(--red-bright); font-size:12px; letter-spacing:5px;
+    margin-top:10px;
+  }
+
+  /* ===== FOOTER ===== */
+  footer{
+    background:var(--white);
+    color:var(--ink-2);
+    padding:60px 24px 30px;
+    text-align:center;
+    border-top:6px solid var(--red);
+  }
+  footer .brand{
+    font-family:'Abril Fatface', serif;
+    color:var(--red);
+    font-size:42px;
+    margin-bottom:8px;
+    letter-spacing:-.5px;
+    text-shadow: 3px 3px 0 var(--black);
+  }
+  footer .brand .amp{
+    font-family:'Caveat', cursive;
+    color:var(--black); font-size:.6em;
+    margin: 0 10px;
+    text-shadow:none;
+  }
+  footer .tag{
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    letter-spacing:4px; font-size:13px;
+    text-transform:uppercase;
+    color:var(--ink);
+  }
+  footer .socials{
+    display:flex; gap:14px; justify-content:center; margin:30px 0; flex-wrap:wrap;
+  }
+  footer .socials a{
+    color:var(--black);
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    letter-spacing:3px; font-size:11px;
+    border:2px solid var(--black);
+    padding:11px 22px; border-radius:40px;
+    transition: all .2s ease;
+    cursor:pointer;
+    display:inline-flex; align-items:center; gap:8px;
+    min-height:44px;
+  }
+  footer .socials a:hover{
+    background:var(--red); color:var(--white); border-color:var(--red);
+    transform:translateY(-2px);
+  }
+  footer .socials a:focus-visible{ outline:3px solid var(--red); outline-offset:3px }
+  footer .socials svg{ width:14px; height:14px }
+  footer .legal{
+    color:var(--grey); font-size:12px; letter-spacing:2px;
+    margin-top:24px;
+  }
+
+  /* ===== JUKEBOX (persistent) ===== */
+  .jukebox{
+    position:fixed; bottom:18px; right:18px; z-index:var(--z-jukebox);
+    background:var(--white);
+    border:3px solid var(--black);
+    border-radius:40px;
+    padding:8px 14px 8px 8px;
+    display:flex; align-items:center; gap:10px;
+    color:var(--black);
+    font-family:'Karla', sans-serif;
+    font-size:11px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.18), 4px 4px 0 var(--red);
+    transition: transform .3s ease;
+  }
+  .jukebox.collapsed{ transform: translateX(calc(100% - 60px)) }
+  .vinyl{
+    width:36px; height:36px; border-radius:50%; flex-shrink:0;
+    background:
+      radial-gradient(circle, var(--red) 0 22%, var(--black) 22% 26%, #1a1a1a 26% 100%);
+    background-image:
+      radial-gradient(circle, var(--red) 0 22%, var(--black) 22% 26%, transparent 26%),
+      repeating-radial-gradient(circle, #1a1a1a 26% 28%, #2a2a2a 28% 30%);
+    border:2px solid var(--black);
+    animation: spin 4s linear infinite;
+    animation-play-state:paused;
+  }
+  .jukebox.playing .vinyl{ animation-play-state:running }
+  @keyframes spin{ to{ transform:rotate(360deg) } }
+  .jukebox button{
+    background:var(--red); color:var(--white); border:none;
+    width:34px; height:34px; cursor:pointer;
+    border-radius:50%;
+    display:inline-flex; align-items:center; justify-content:center;
+    transition: all .15s;
+  }
+  .jukebox button svg{ width:14px; height:14px }
+  .jukebox button:hover{ background:var(--red-deep) }
+  .jukebox button:focus-visible{ outline:3px solid var(--black); outline-offset:2px }
+  .jukebox .label{ min-width:88px }
+  .jukebox .label b{
+    display:block; font-family:'Playfair Display SC', serif;
+    color:var(--red); font-size:10px;
+    letter-spacing:3px; margin-bottom:1px;
+  }
+  .jukebox .label span{ color:var(--ink-2); font-size:11px; font-style:italic }
+  .jukebox .toggle{
+    position:absolute; left:-2px; top:50%; transform:translate(-100%,-50%);
+    width:30px; height:54px; border-radius:30px 0 0 30px;
+    background:var(--black); color:var(--white);
+    border:3px solid var(--black); border-right:none;
+  }
+  .jukebox .toggle:hover{ background:var(--red); border-color:var(--red) }
+
+  #ytPlayer{
+    position:fixed; bottom:0; left:0;
+    width:1px; height:1px; opacity:0; pointer-events:none; border:0;
+  }
+
+  /* music nudge */
+  .music-nudge{
+    position:fixed; top:88px; left:50%; transform:translateX(-50%);
+    background:var(--red); color:var(--white);
+    padding:11px 22px; border-radius:40px;
+    font-family:'Playfair Display SC', serif;
+    font-weight:700;
+    letter-spacing:2.5px; font-size:12px;
+    z-index:var(--z-nudge);
+    box-shadow:0 8px 22px rgba(220,38,38,.4);
+    cursor:pointer;
+    animation: fade .6s ease both;
+    display:flex; align-items:center; gap:8px;
+    text-transform:uppercase;
+    min-height:44px;
+  }
+  .music-nudge svg{ width:16px; height:16px }
+  .music-nudge.hide{ display:none }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal{ opacity:0; transform:translateY(24px); transition: opacity .8s ease, transform .8s ease }
+  .reveal.in{ opacity:1; transform:none }
+
+  /* ===== GHOST ===== */
+  .ghost{
+    position:fixed; pointer-events:none;
+    font-size:38px; opacity:0;
+    transition: opacity 2s, transform 8s linear;
+    z-index:30;
+    text-shadow: 0 0 22px rgba(255,255,255,.6);
+    filter: drop-shadow(0 0 6px rgba(0,0,0,.2));
+  }
+
+  /* ===== LIGHTBOX ===== */
+  .lb{
+    position:fixed; inset:0; background:rgba(0,0,0,.92);
+    display:none; align-items:center; justify-content:center;
+    z-index:var(--z-modal); padding:20px; cursor:zoom-out;
+  }
+  .lb.open{ display:flex }
+  .lb img{ max-width:96vw; max-height:92vh; box-shadow:0 0 0 4px var(--white), 12px 12px 0 var(--red) }
+  .lb-close{
+    position:absolute; top:20px; right:20px;
+    width:48px; height:48px; border-radius:50%;
+    background:var(--white); border:none; color:var(--black);
+    font-size:22px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .lb-close:focus-visible{ outline:3px solid var(--red); outline-offset:3px }
+</style>
+</head>
+<body>
+
+<!-- ===== INLINE SVG ICONS (sprite) ===== -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <defs>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+    </symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+    </symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/>
+    </symbol>
+    <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"/><rect x="17" y="5" width="2" height="14"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    </symbol>
+    <symbol id="i-fb" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.87v-6.99H7.9V12h2.5V9.85c0-2.46 1.47-3.83 3.72-3.83 1.08 0 2.21.2 2.21.2v2.43h-1.25c-1.23 0-1.61.76-1.61 1.55V12h2.74l-.44 2.88h-2.3v6.99A10 10 0 0 0 22 12z"/></symbol>
+    <symbol id="i-ig" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+  </defs>
+</svg>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <span class="star">★</span> Historic Brookdale Lodge <span class="star">★</span> Est. 1900 <span class="star">★</span> 11570 Highway 9, Brookdale CA <span class="star">★</span>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#top" class="logo">Brookdale <span>★</span> Diner</a>
+  <ul>
+    <li><a href="#history">History</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#visit">Visit</a></li>
+    <li><a href="#family">Kitchen</a></li>
+  </ul>
+  <a class="call-cta" href="tel:+18316096126" aria-label="Call Brookdale Diner at (831) 609-6126">
+    <svg aria-hidden="true"><use href="#i-phone"/></svg>
+    (831) 609-6126
+  </a>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="hero-grid">
+    <div class="hero-left">
+      <!-- spinning starburst badge -->
+      <svg class="hero-burst" viewBox="0 0 200 200" aria-hidden="true">
+        <g>
+          <polygon points="100,10 110,80 180,90 110,100 100,170 90,100 20,90 90,80" fill="#DC2626"/>
+          <circle cx="100" cy="100" r="42" fill="#0a0a0a"/>
+          <text x="100" y="92" text-anchor="middle" fill="#fff" font-family="'Playfair Display SC', serif" font-size="13" font-weight="700" letter-spacing="2">EST.</text>
+          <text x="100" y="112" text-anchor="middle" fill="#fff" font-family="'Abril Fatface', serif" font-size="22">1900</text>
+        </g>
+      </svg>
+
+      <div class="hero-est">EST. AT THE HISTORIC BROOKDALE LODGE</div>
+      <h1>Brookdale<span class="amp">&amp;</span>Diner</h1>
+      <div class="hero-tag">where the Brook Room once flowed and the milkshakes still do</div>
+      <div class="hero-meta">All-Day Breakfast <b>★</b> Legendary Burgers <b>★</b> Hand-Spun Shakes</div>
+      <div class="hero-open"><span class="dot"></span><span id="openStatus">CHECKING…</span></div>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#menu">
+          <svg aria-hidden="true"><use href="#i-menu"/></svg>
+          See the Menu
+        </a>
+        <a class="btn btn-ghost" href="tel:+18316096126" aria-label="Call to order">
+          <svg aria-hidden="true"><use href="#i-phone"/></svg>
+          Order by Phone
+        </a>
+      </div>
+    </div>
+    <div class="hero-right" role="img" aria-label="The Brookdale Diner interior — checkered floor, jukebox, red beams">
+      <span class="hero-photo-cap">★ Real Diner. Real Booths. ★</span>
+    </div>
+  </div>
+</header>
+
+<!-- CHECKER STRIP — like the diner floor -->
+<div class="checker-strip" aria-hidden="true"></div>
+
+<!-- HISTORY -->
+<section class="history" id="history">
+  <div class="container">
+    <div class="eyebrow reveal">A Century of Stories</div>
+    <h2 class="section-title reveal">The <em>Lodge</em> & The Diner</h2>
+    <p class="section-lede reveal">A Santa Cruz Mountains landmark since 1900 — and we're proud to feed it.</p>
+
+    <div class="history-grid">
+      <div class="history-prose reveal">
+        <p>In <b>1900</b>, Judge James Harvey Logan bought the old Grover Lumber Mill on the San Lorenzo River and turned it into a creekside resort.</p>
+        <p>By 1922, Dr. F.K. Camp had hired architect Horace Cotton to do something nobody had done — build a dining room <em>over the creek itself</em>. The result was the legendary <b>Brook Room</b>: a restaurant with a real running brook flowing through it. Trout swam under the tables.</p>
+        <div class="pull-quote">"I went to the Brookdale Lodge / where they have the brook indoors…" — from one of three swing-era hits the Lodge inspired.</div>
+        <p>For decades this was the second-most-popular resort in California. Pres. <b>Herbert Hoover</b> stayed here. So did <b>Marilyn Monroe</b>, <b>Mae West</b>, <b>Joan Crawford</b>, <b>Tyrone Power</b>, <b>Rita Hayworth</b>, and <b>Hedy Lamarr</b>. The biggest big bands in the country played the ballroom; UN diplomats slipped up from San Francisco in '45.</p>
+        <p>Down the road lived a tiny <b>Shirley Temple</b> and Tarzan himself, <b>Johnny Weissmuller</b>.</p>
+        <p>And there's <b>Sarah</b> — the little girl ghost still said to wander the halls. <em>Ghost Adventures</em> filmed here in 2012. Locals will tell you they've heard her.</p>
+        <p>Today the Lodge is back, and the diner downstairs is run by a Santa Cruz Mountains family that's been cooking up here for generations. Come for the burger. Stay for the ghost stories.</p>
+
+        <ol class="timeline">
+          <li><span class="y">1900</span><span class="e">Judge Logan founds the resort.</span></li>
+          <li><span class="y">1922</span><span class="e">The Brook Room is built — a dining room with a creek running through it.</span></li>
+          <li><span class="y">1930s–50s</span><span class="e">Hollywood &amp; presidents on the dance floor.</span></li>
+          <li><span class="y">1945</span><span class="e">UN delegates duck up from the SF conference.</span></li>
+          <li><span class="y">2012</span><span class="e">Ghost Adventures films here. Sarah declines comment.</span></li>
+          <li><span class="y">Today</span><span class="e">The diner is open. Pull up a stool.</span></li>
+        </ol>
+      </div>
+
+      <div class="reveal">
+        <figure class="history-photo">
+          <img src="photos/photo6.jpg" alt="The Historic Brookdale Lodge nestled in the redwoods of the Santa Cruz Mountains" />
+          <figcaption class="cap">★ Historic Brookdale Lodge ★</figcaption>
+        </figure>
+        <h3 style="margin-top:34px; font-family:'Playfair Display SC',serif; color:var(--red); letter-spacing:5px; font-size:13px; text-transform:uppercase">★ The Guest Book</h3>
+        <ul class="guest-list">
+          <li>Pres. Herbert Hoover</li>
+          <li>Marilyn Monroe</li>
+          <li>Mae West</li>
+          <li>Joan Crawford</li>
+          <li>Tyrone Power</li>
+          <li>Rita Hayworth</li>
+          <li>Hedy Lamarr</li>
+          <li>Shirley Temple</li>
+          <li>Johnny Weissmuller</li>
+          <li>1945 UN delegates</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="checker-strip" aria-hidden="true"></div>
+
+<!-- MENU -->
+<section class="menu" id="menu">
+  <div class="container">
+    <div class="eyebrow reveal">The Menu</div>
+    <h2 class="section-title reveal">Served <em>All Day</em></h2>
+    <p class="section-lede reveal">Brookdale, California · the recipes are family, the hands are family, the pride is family.</p>
+
+    <!-- TOP-LEVEL TABS -->
+    <div class="pill-row reveal" role="tablist" aria-label="Menu category">
+      <button class="pill active" data-tab="breakfast" role="tab" aria-selected="true">Breakfast</button>
+      <button class="pill" data-tab="burgers" role="tab" aria-selected="false">Burgers</button>
+      <button class="pill" data-tab="plates" role="tab" aria-selected="false">Dinner Plates</button>
+      <button class="pill" data-tab="shakes" role="tab" aria-selected="false">Shakes &amp; Sweets</button>
+      <button class="pill" data-tab="sides" role="tab" aria-selected="false">Sides</button>
+    </div>
+
+    <div class="pill-divider"></div>
+
+    <!-- BREAKFAST TAB -->
+    <div class="tab-panel active" id="tab-breakfast" role="tabpanel">
+      <div class="pill-row sub" role="tablist" aria-label="Breakfast subsection">
+        <button class="pill active" data-sub="capone" role="tab" aria-selected="true">Capone Classics</button>
+        <button class="pill" data-sub="omelettes" role="tab" aria-selected="false">Old School Omelettes</button>
+        <button class="pill" data-sub="scrambles" role="tab" aria-selected="false">Dean's Scrambles</button>
+        <button class="pill" data-sub="benedicts" role="tab" aria-selected="false">Beatnik Benedicts</button>
+        <button class="pill" data-sub="griddles" role="tab" aria-selected="false">Gangster Griddles</button>
+      </div>
+
+      <div class="sub-panel" data-sub="capone" style="display:block">
+        <div class="platos-label">Capone Classics</div>
+        <div class="menu-note-bar">Served with hash browns or house potatoes, seasonal fruit, and choice of toast.</div>
+        <div class="menu-grid">
+          <div class="item"><div class="item-head"><span class="item-name">Two Eggs</span><span class="item-price">$12</span></div><div class="item-desc">Any style.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Bacon &amp; Eggs</span><span class="item-price">$15</span></div><div class="item-desc">Two eggs any style with three slices of made-to-order bacon.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Sausage &amp; Eggs</span><span class="item-price">$15</span></div><div class="item-desc">Two eggs any style with two generous links of sausage.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Avocado Toast</span><span class="item-price">$13</span></div><div class="item-desc">Two eggs any style and salt &amp; peppered avocado slices drizzled with olive oil.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Biscuits &amp; Gravy</span><span class="item-price">$17</span></div><div class="item-desc">Two biscuits with sausage gravy.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Chicken Fried Steak</span><span class="item-price">$18</span></div><div class="item-desc">Crispy fried steak with country gravy and two eggs any style.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Corned Beef Hash</span><span class="item-price">$17</span></div><div class="item-desc">With potatoes &amp; onions, and two eggs any style on top.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Frittata</span><span class="item-price">$18</span></div><div class="item-desc">Bacon, mushrooms, tomatoes, and mozzarella, baked into an open-faced egg frittata.</div></div>
+        </div>
+      </div>
+
+      <div class="sub-panel" data-sub="omelettes" style="display:none">
+        <div class="platos-label">Old School Omelettes</div>
+        <div class="menu-note-bar">Three-egg omelettes served with hash browns or house potatoes, seasonal fruit, and choice of toast.</div>
+        <div class="menu-grid">
+          <div class="item"><div class="item-head"><span class="item-name">Italian</span><span class="item-price">$19</span></div><div class="item-desc">Mushrooms, pesto, and mozzarella.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Ham, Spinach &amp; Tomato</span><span class="item-price">$18</span></div><div class="item-desc">With Monterey Jack cheese.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Bay Shrimp</span><span class="item-price">$18</span></div><div class="item-desc">Bay shrimp, white mushrooms, Swiss cheese, and avocado.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Custom Omelette</span><span class="item-price">$15</span></div><div class="item-desc">Three-egg omelette with cheese — add your own ingredients.</div></div>
+        </div>
+        <div class="add-list">
+          <b>★ ADD-INS</b> &nbsp;·&nbsp;
+          Artichoke <b>$2</b> &nbsp; Sausage <b>$2</b> &nbsp; Bacon <b>$2</b> &nbsp; Tomato <b>$1</b> &nbsp; Spinach <b>$2</b> &nbsp; Shrimp <b>$4</b> &nbsp; Avocado <b>$3</b> &nbsp; Chorizo <b>$3</b> &nbsp; Vegetable mix <b>$3</b><br>
+          Onions, mushroom, bell pepper, broccoli, zucchini — <b>$1 each</b>
+        </div>
+      </div>
+
+      <div class="sub-panel" data-sub="scrambles" style="display:none">
+        <div class="platos-label">Dean's Diner Scrambles</div>
+        <div class="menu-note-bar">Served with hash browns or house potatoes, fruit, and your choice of toast.</div>
+        <div class="menu-grid">
+          <div class="item"><div class="item-head"><span class="item-name">Brookdale</span><span class="item-price">$17</span></div><div class="item-desc">Zucchini, bell peppers, onion, broccoli, and feta cheese.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Vegetarian</span><span class="item-price">$17</span></div><div class="item-desc">Zucchini, bell peppers, onions, and mozzarella.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Farmer's</span><span class="item-price">$17</span></div><div class="item-desc">Spinach, mushrooms, and bacon.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Meat Lovers</span><span class="item-price">$19</span></div><div class="item-desc">Ham, bacon, sausage, onions, bell peppers, tomato, and cheddar cheese.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Denver</span><span class="item-price">$17</span></div><div class="item-desc">Ham, onions, and bell peppers.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Turkey Avocado</span><span class="item-price">$17</span></div><div class="item-desc">Turkey, spinach, mushroom, mozzarella, and avocado.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Chorizo Onion</span><span class="item-price">$18</span></div><div class="item-desc">House chorizo and sweet onion.</div></div>
+        </div>
+      </div>
+
+      <div class="sub-panel" data-sub="benedicts" style="display:none">
+        <div class="platos-label">Beatnik Benedicts</div>
+        <div class="menu-note-bar">Served with hash browns or house potatoes, fruit.</div>
+        <div class="menu-grid">
+          <div class="item"><div class="item-head"><span class="item-name">Classic</span><span class="item-price">$17</span></div><div class="item-desc">Ham, two poached eggs, and hollandaise.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Vegetarian</span><span class="item-price">$17</span></div><div class="item-desc">Zucchini, mushrooms, peppers, two poached eggs, and hollandaise.</div></div>
+        </div>
+      </div>
+
+      <div class="sub-panel" data-sub="griddles" style="display:none">
+        <div class="platos-label">Gangster Griddles</div>
+        <div class="menu-note-bar">Add bacon and two eggs to any griddle classic for <b>$6</b> · Add strawberries, blueberries or bananas <b>$2</b>.</div>
+        <div class="menu-grid">
+          <div class="item"><div class="item-head"><span class="item-name">Pancakes</span><span class="item-price">$13</span></div><div class="item-desc">Three per order. Make it a five-stack for $3.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Waffles</span><span class="item-price">$12</span></div><div class="item-desc">Two per order.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">French Toast</span><span class="item-price">$13</span></div><div class="item-desc">Three slices per order.</div></div>
+          <div class="item"><div class="item-head"><span class="item-name">Mini Waffles</span><span class="item-price">$8</span></div><div class="item-desc">Four per order.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BURGERS TAB -->
+    <div class="tab-panel" id="tab-burgers" role="tabpanel">
+      <div class="platos-label">Legendary Burgers</div>
+      <div class="menu-note-bar">Signature beef on a toasted brioche bun, served with thin-cut fries. Sub steak-cut, sweet potato fries, onion rings, or side salad <b>+ $2</b>.</div>
+      <div class="menu-grid">
+        <div class="item"><div class="item-head"><span class="item-name">The Brookdale</span><span class="item-price">$16</span></div><div class="item-desc">Signature juicy beef patty, fresh lettuce, tomato &amp; Brookdale's secret sauce on a toasted brioche bun.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Cheeseburger</span><span class="item-price">$17</span></div><div class="item-desc">The Brookdale, with American, cheddar, swiss, or pepper jack.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Bacon Cheeseburger</span><span class="item-price">$19</span></div><div class="item-desc">Thick-cut applewood bacon stacked on the cheeseburger.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Patty Melt</span><span class="item-price">$18</span></div><div class="item-desc">Beef patty, swiss cheese and grilled onions on toasted rye.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Mushroom Swiss</span><span class="item-price">$18</span></div><div class="item-desc">Sautéed crimini mushrooms, melted swiss, garlic aioli.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Club Sandwich</span><span class="item-price">$17</span></div><div class="item-desc">Roast turkey, bacon, lettuce, tomato &amp; mayo on toasted sourdough.</div></div>
+      </div>
+    </div>
+
+    <!-- PLATES TAB -->
+    <div class="tab-panel" id="tab-plates" role="tabpanel">
+      <div class="platos-label">The Plate</div>
+      <div class="menu-note-bar">Lunch &amp; dinner. All entrées served with seasonal vegetables and your choice of side.</div>
+      <div class="menu-grid">
+        <div class="item"><div class="item-head"><span class="item-name">Fried Chicken</span><span class="item-price">$22</span></div><div class="item-desc">Crispy on the outside, juicy on the inside, the way grandma did it.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Ribeye Steak</span><span class="item-price">$32</span></div><div class="item-desc">Hand-cut and char-grilled, with red wine demi-glace.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Pork Chop</span><span class="item-price">$24</span></div><div class="item-desc">Grilled bone-in pork chop with brown butter sauce.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Flatbread Pizza</span><span class="item-price">$16</span></div><div class="item-desc">Wood-fired-style flatbread with classic toppings.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Caesar Salad</span><span class="item-price">$14</span></div><div class="item-desc">Romaine, shaved parmesan, croutons, house Caesar. Add chicken $5.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Cobb Salad</span><span class="item-price">$16</span></div><div class="item-desc">Greens, bacon, blue cheese, avocado, tomato, hard egg, grilled chicken.</div></div>
+      </div>
+    </div>
+
+    <!-- SHAKES TAB -->
+    <div class="tab-panel" id="tab-shakes" role="tabpanel">
+      <div class="platos-label">Hand-Spun Shakes &amp; Sweets</div>
+      <div class="menu-note-bar">Made with five scoops of <b>Marianne's Ice Cream</b> — a Santa Cruz tradition since 1947.</div>
+      <div class="menu-grid">
+        <div class="item"><div class="item-head"><span class="item-name">Classic Milkshake</span><span class="item-price">$8</span></div><div class="item-desc">Vanilla, chocolate, or strawberry. Hand-spun thick.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Specialty Shake</span><span class="item-price">$10</span></div><div class="item-desc">Cookies-and-cream, mint chip, salted caramel, or peanut butter.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Sundae</span><span class="item-price">$9</span></div><div class="item-desc">Hot fudge or strawberry, whipped cream, a cherry on top.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Single Scoop Cone</span><span class="item-price">$5</span></div><div class="item-desc">Marianne's, in a fresh waffle cone.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Double Scoop Cone</span><span class="item-price">$8</span></div><div class="item-desc">Two flavors, side by side.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Root Beer Float</span><span class="item-price">$8</span></div><div class="item-desc">Two scoops, root beer, two straws if you're feeling generous.</div></div>
+      </div>
+    </div>
+
+    <!-- SIDES TAB -->
+    <div class="tab-panel" id="tab-sides" role="tabpanel">
+      <div class="platos-label">Sides &amp; Substitutions</div>
+      <div class="menu-note-bar">Screaming Breakfast Sides — perfect alongside any plate.</div>
+      <div class="menu-grid">
+        <div class="item"><div class="item-head"><span class="item-name">Bacon</span><span class="item-price">$4</span></div><div class="item-desc">Three strips, made to order.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Sausage</span><span class="item-price">$4</span></div><div class="item-desc">Three links.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Biscuits &amp; Gravy</span><span class="item-price">$4</span></div><div class="item-desc">One biscuit.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Hash Browns</span><span class="item-price">$5</span></div><div class="item-desc">Crispy, golden, salted.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">House Potatoes</span><span class="item-price">$5</span></div><div class="item-desc">Diced, herbed, griddled.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Cottage Cheese</span><span class="item-price">$5</span></div><div class="item-desc">Cool and creamy.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Avocado</span><span class="item-price">$3</span></div><div class="item-desc">Sliced and salted.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Corned Beef Hash</span><span class="item-price">$5</span></div><div class="item-desc">House-shredded and crisped.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Toast</span><span class="item-price">$2</span></div><div class="item-desc">White, wheat, sourdough, rye, or English muffin.</div></div>
+        <div class="item"><div class="item-head"><span class="item-name">Fruit Cup</span><span class="item-price">$6</span></div><div class="item-desc">Seasonal mountain fruit.</div></div>
+      </div>
+    </div>
+
+    <p class="menu-footer">
+      Dine-In <span class="star">★</span> Takeout <span class="star">★</span> Lodge Room Delivery <span class="star">★</span> Catering
+    </p>
+  </div>
+</section>
+
+<div class="checker-strip" aria-hidden="true"></div>
+
+<!-- GALLERY -->
+<section class="gallery" id="gallery">
+  <div class="container">
+    <div class="eyebrow reveal">From The Kitchen</div>
+    <h2 class="section-title reveal">A Look <em>Inside</em></h2>
+    <p class="section-lede reveal">Real food. Real plates. Real Brookdale.</p>
+    <div class="gallery-grid">
+      <button type="button" class="gallery-item reveal" data-img="photos/photo5.jpg" aria-label="View larger: Bacon cheeseburger with hand-cut fries">
+        <img src="photos/photo5.jpg" alt="Bacon cheeseburger with hand-cut fries on a Brookdale Diner plate" loading="lazy">
+        <div class="cap">Bacon Cheeseburger<small>★ Hand-cut fries</small></div>
+      </button>
+      <button type="button" class="gallery-item reveal" data-img="photos/photo10.jpg" aria-label="View larger: Bacon and eggs breakfast">
+        <img src="photos/photo10.jpg" alt="Bacon, scrambled eggs, and home potatoes plated for breakfast" loading="lazy">
+        <div class="cap">Bacon &amp; Eggs<small>★ Breakfast all day</small></div>
+      </button>
+      <button type="button" class="gallery-item reveal" data-img="photos/photo4.jpg" aria-label="View larger: Avocado omelette">
+        <img src="photos/photo4.jpg" alt="Open-faced avocado omelette with home potatoes and seasonal fruit" loading="lazy">
+        <div class="cap">Avocado Omelette<small>★ Old School</small></div>
+      </button>
+      <button type="button" class="gallery-item reveal" data-img="photos/photo8.jpg" aria-label="View larger: Club sandwich">
+        <img src="photos/photo8.jpg" alt="Club sandwich with French fries and dipping sauce" loading="lazy">
+        <div class="cap">Club Sandwich<small>★ House-roasted turkey</small></div>
+      </button>
+      <button type="button" class="gallery-item reveal" data-img="photos/photo9.jpg" aria-label="View larger: Char-grilled steak">
+        <img src="photos/photo9.jpg" alt="Char-grilled steak with rice and seasonal vegetables" loading="lazy">
+        <div class="cap">Grilled Steak<small>★ Char-grilled to order</small></div>
+      </button>
+      <button type="button" class="gallery-item reveal" data-img="photos/photo2.jpg" aria-label="View larger: Buttermilk pancakes">
+        <img src="photos/photo2.jpg" alt="Stack of buttermilk pancakes dusted with powdered sugar and topped with strawberry" loading="lazy">
+        <div class="cap">Buttermilk Pancakes<small>★ Three per order</small></div>
+      </button>
+      <button type="button" class="gallery-item reveal" data-img="photos/photo3.jpg" aria-label="View larger: Inside the diner">
+        <img src="photos/photo3.jpg" alt="Inside the Brookdale Diner — red booths and black-and-white checkered floor" loading="lazy">
+        <div class="cap">The Booths<small>★ Pull up a seat</small></div>
+      </button>
+      <button type="button" class="gallery-item reveal" data-img="photos/photo1.jpg" aria-label="View larger: The jukebox">
+        <img src="photos/photo1.jpg" alt="The Brookdale Diner jukebox by the window with red booths and checkered floor" loading="lazy">
+        <div class="cap">The Jukebox<small>★ Drop a quarter</small></div>
+      </button>
+    </div>
+  </div>
+</section>
+
+<div class="checker-strip" aria-hidden="true"></div>
+
+<!-- VISIT -->
+<section class="visit" id="visit">
+  <div class="container">
+    <div class="eyebrow reveal">Come On Down</div>
+    <h2 class="section-title reveal">Find <em>Us</em></h2>
+    <p class="section-lede reveal">Tucked inside the Historic Brookdale Lodge on Highway 9 — the heart of the Santa Cruz Mountains.</p>
+
+    <div class="visit-grid">
+      <div class="panel reveal">
+        <h3>Hours</h3>
+        <ul class="hours-list" id="hoursList">
+          <li data-day="1"><span class="day">Monday</span><span class="time">2:00 PM – 10:00 PM</span></li>
+          <li data-day="2"><span class="day">Tuesday</span><span class="time">2:00 PM – 10:00 PM</span></li>
+          <li data-day="3"><span class="day">Wednesday</span><span class="time">7:00 AM – 10:00 PM</span></li>
+          <li data-day="4"><span class="day">Thursday</span><span class="time">7:00 AM – 10:00 PM</span></li>
+          <li data-day="5"><span class="day">Friday</span><span class="time">7:00 AM – 10:00 PM</span></li>
+          <li data-day="6"><span class="day">Saturday</span><span class="time">7:00 AM – 10:00 PM</span></li>
+          <li data-day="0"><span class="day">Sunday</span><span class="time">7:00 AM – 10:00 PM</span></li>
+        </ul>
+      </div>
+
+      <div class="panel reveal">
+        <h3>Find Us</h3>
+        <ul class="visit-info">
+          <li><span class="label">Address</span><a href="https://maps.google.com/?q=11570+Highway+9+Brookdale+CA" target="_blank" rel="noopener">11570 Highway 9, Brookdale, CA</a></li>
+          <li><span class="label">Phone</span><a href="tel:+18316096126">(831) 609-6126</a></li>
+          <li><span class="label">Service</span>Dine-in · Takeout · Catering</li>
+          <li><span class="label">Delivery</span>Lodge rooms · River Run Lounge</li>
+          <li><span class="label">Lodge</span><a href="https://brookdalelodge.com" target="_blank" rel="noopener">brookdalelodge.com</a></li>
+          <li><span class="label">Lounge</span><a href="https://theriverrunbrookdale.com" target="_blank" rel="noopener">theriverrunbrookdale.com</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAMILY -->
+<section class="family" id="family">
+  <div class="container">
+    <div class="eyebrow reveal">From Our Kitchen</div>
+    <h2 class="section-title reveal">Cooked by the <em>Alvarez</em> Family</h2>
+    <p class="section-lede reveal">Three generations of Santa Cruz Mountains restaurateurs — and counting.</p>
+    <p class="reveal">Our kitchen is led by <b>Juan "Junior" Alvarez</b>, a Santa Cruz Mountains chef from generations of family restaurateurs. The recipes are family. The hands are family. The pride? Family.</p>
+    <p class="reveal">We don't cut corners. We don't microwave. We grind the burger, hand-spin the shakes, batter the rings, whip the hollandaise. Everything a 1950s diner ought to be — because we mean it.</p>
+    <div class="signature reveal">— Junior &amp; the boys
+      <small>BROOKDALE DINER · BROOKDALE, CALIFORNIA</small>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="brand">Brookdale<span class="amp">&amp;</span>Diner</div>
+  <div class="tag">at the Historic Brookdale Lodge <span style="color:var(--red)">★</span> Santa Cruz Mountains, CA</div>
+  <div class="socials">
+    <a href="tel:+18316096126" aria-label="Call (831) 609-6126">
+      <svg aria-hidden="true"><use href="#i-phone"/></svg>
+      (831) 609-6126
+    </a>
+    <a href="https://facebook.com/BrookdaleDiner" target="_blank" rel="noopener" aria-label="Facebook">
+      <svg aria-hidden="true"><use href="#i-fb"/></svg>
+      Facebook
+    </a>
+    <a href="https://instagram.com/brookdalediner/" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg aria-hidden="true"><use href="#i-ig"/></svg>
+      Instagram
+    </a>
+    <a href="https://maps.google.com/?q=11570+Highway+9+Brookdale+CA" target="_blank" rel="noopener" aria-label="Directions">
+      <svg aria-hidden="true"><use href="#i-pin"/></svg>
+      Directions
+    </a>
+  </div>
+  <div class="legal">© 2026 BROOKDALE DINER · ALL RIGHTS RESERVED</div>
+</footer>
+
+<!-- MUSIC NUDGE -->
+<button type="button" class="music-nudge" id="musicNudge" aria-label="Tap to enable jukebox">
+  <svg aria-hidden="true"><use href="#i-volume"/></svg>
+  Tap anywhere to enable the 90s jukebox
+</button>
+
+<!-- JUKEBOX -->
+<div class="jukebox" id="jukebox" role="region" aria-label="Background music player">
+  <button type="button" class="toggle" id="jbToggle" aria-label="Hide jukebox">
+    <svg aria-hidden="true" style="width:14px; height:14px"><use href="#i-arrow"/></svg>
+  </button>
+  <div class="vinyl" aria-hidden="true"></div>
+  <div class="label"><b>JUKEBOX</b><span id="jbStatus">Loading…</span></div>
+  <button type="button" id="jbPlay" aria-label="Play / Pause">
+    <svg aria-hidden="true"><use href="#i-pause"/></svg>
+  </button>
+  <button type="button" id="jbNext" aria-label="Next track">
+    <svg aria-hidden="true"><use href="#i-next"/></svg>
+  </button>
+</div>
+
+<div id="ytPlayer"></div>
+
+<!-- Lightbox -->
+<div class="lb" id="lb" role="dialog" aria-label="Photo viewer" aria-modal="true">
+  <button class="lb-close" id="lbClose" aria-label="Close">
+    <svg aria-hidden="true" style="width:18px; height:18px"><use href="#i-x"/></svg>
+  </button>
+  <img id="lbImg" src="" alt="">
+</div>
+
+<script>
+// =======================================================
+// OPEN NOW
+// =======================================================
+function updateOpenStatus(){
+  const now = new Date();
+  const day = now.getDay();
+  const h = now.getHours() + now.getMinutes()/60;
+  const openH = (day===1||day===2) ? 14 : 7;
+  const closeH = 22;
+  const open = h >= openH && h < closeH;
+  document.getElementById('openStatus').textContent = open ? 'OPEN NOW · COME ON DOWN' : 'CLOSED · SEE HOURS';
+  document.querySelectorAll('#hoursList li').forEach(li=>{
+    li.classList.toggle('today', parseInt(li.dataset.day,10)===day);
+  });
+}
+updateOpenStatus();
+setInterval(updateOpenStatus, 60_000);
+
+// =======================================================
+// SCROLL REVEAL
+// =======================================================
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }});
+}, {threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// =======================================================
+// MENU TABS
+// =======================================================
+function activate(btn, group, panelSelector, idAttr){
+  document.querySelectorAll(group).forEach(b=>{
+    const on = b===btn;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+}
+
+document.querySelectorAll('.menu .pill-row:not(.sub) .pill').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const tab = btn.dataset.tab;
+    activate(btn, '.menu .pill-row:not(.sub) .pill');
+    document.querySelectorAll('.tab-panel').forEach(p=>{
+      p.classList.toggle('active', p.id === 'tab-'+tab);
+    });
+  });
+});
+
+document.querySelectorAll('.pill-row.sub .pill').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const sub = btn.dataset.sub;
+    activate(btn, '.pill-row.sub .pill');
+    document.querySelectorAll('.sub-panel').forEach(p=>{
+      p.style.display = p.dataset.sub === sub ? 'block' : 'none';
+    });
+  });
+});
+
+// =======================================================
+// GALLERY LIGHTBOX
+// =======================================================
+const lb = document.getElementById('lb');
+const lbImg = document.getElementById('lbImg');
+const lbClose = document.getElementById('lbClose');
+function openLB(src, alt){
+  lbImg.src = src; lbImg.alt = alt || '';
+  lb.classList.add('open');
+  lbClose.focus();
+}
+function closeLB(){ lb.classList.remove('open'); lbImg.src=''; }
+document.querySelectorAll('.gallery-item').forEach(g=>{
+  g.addEventListener('click', ()=>openLB(g.dataset.img, g.querySelector('img').alt));
+});
+lbClose.addEventListener('click', closeLB);
+lb.addEventListener('click', e=>{ if (e.target === lb) closeLB(); });
+document.addEventListener('keydown', e=>{ if (e.key === 'Escape' && lb.classList.contains('open')) closeLB(); });
+
+// =======================================================
+// JUKEBOX — YouTube IFrame API
+// =======================================================
+const PLAYLIST_ID = 'PLwMV5nDiSuhXRGfeFHldeo7uNY-fl-eET';
+let player = null;
+let playerReady = false;
+let isPlaying = false;
+let unmuted = false;
+
+const jukebox = document.getElementById('jukebox');
+const status  = document.getElementById('jbStatus');
+const playBtn = document.getElementById('jbPlay');
+const playIcon = playBtn.querySelector('use');
+const nextBtn = document.getElementById('jbNext');
+const nudge   = document.getElementById('musicNudge');
+const jbToggle = document.getElementById('jbToggle');
+
+(function injectYT(){
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+})();
+
+window.onYouTubeIframeAPIReady = function(){
+  player = new YT.Player('ytPlayer', {
+    height:'0', width:'0',
+    playerVars:{
+      listType:'playlist', list:PLAYLIST_ID,
+      autoplay:1, mute:1, loop:1, controls:0,
+      modestbranding:1, rel:0, playsinline:1
+    },
+    events:{
+      onReady:(e)=>{
+        playerReady = true;
+        try { e.target.setVolume(70); e.target.playVideo(); } catch(err){}
+        isPlaying = true;
+        jukebox.classList.add('playing');
+        playIcon.setAttribute('href', '#i-pause');
+        status.textContent = unmuted ? '90s · Playing' : '90s · Muted';
+      },
+      onStateChange:(e)=>{
+        if (e.data === YT.PlayerState.PLAYING){
+          isPlaying = true;
+          jukebox.classList.add('playing');
+          playIcon.setAttribute('href', '#i-pause');
+          status.textContent = unmuted ? '90s · Playing' : '90s · Muted';
+        } else if (e.data === YT.PlayerState.PAUSED){
+          isPlaying = false;
+          jukebox.classList.remove('playing');
+          playIcon.setAttribute('href', '#i-play');
+          status.textContent = 'Paused';
+        }
+      },
+      onError:()=>{ status.textContent = 'Click to retry'; }
+    }
+  });
+};
+
+function unmuteOnce(){
+  if (unmuted || !playerReady) return;
+  unmuted = true;
+  try { player.unMute(); player.setVolume(70); player.playVideo(); status.textContent = '90s · Playing'; } catch(e){}
+  nudge.classList.add('hide');
+}
+['click','touchstart','keydown','scroll'].forEach(ev=>{
+  window.addEventListener(ev, unmuteOnce, { passive:true, capture:true });
+});
+
+playBtn.addEventListener('click', e=>{
+  e.stopPropagation();
+  if (!playerReady) return;
+  if (isPlaying){ player.pauseVideo(); }
+  else { unmuteOnce(); player.playVideo(); }
+});
+nextBtn.addEventListener('click', e=>{
+  e.stopPropagation();
+  if (!playerReady) return;
+  unmuteOnce(); player.nextVideo();
+});
+jbToggle.addEventListener('click', e=>{
+  e.stopPropagation();
+  jukebox.classList.toggle('collapsed');
+});
+nudge.addEventListener('click', unmuteOnce);
+setTimeout(()=>{ if(!unmuted) nudge.classList.add('hide'); }, 12000);
+
+// =======================================================
+// GHOST — Sarah haunts every minute or so
+// =======================================================
+function summonGhost(){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const g = document.createElement('div');
+  g.className = 'ghost';
+  g.textContent = '👻';
+  g.style.left = (10 + Math.random()*80) + 'vw';
+  g.style.top  = (window.innerHeight - 40) + 'px';
+  document.body.appendChild(g);
+  requestAnimationFrame(()=>{
+    g.style.opacity = '.7';
+    g.style.transform = `translateY(-${window.innerHeight + 100}px) translateX(${(Math.random()-0.5)*300}px)`;
+  });
+  setTimeout(()=>g.remove(), 9000);
+}
+setInterval(()=>{ if (Math.random() < 0.45) summonGhost(); }, 75_000);
+let bufKeys = '';
+document.addEventListener('keydown', e=>{
+  bufKeys = (bufKeys + e.key.toLowerCase()).slice(-5);
+  if (bufKeys === 'sarah'){ summonGhost(); summonGhost(); summonGhost(); }
+});
+</script>
+</body>
+</html>
