@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lodge Room Service — Brookdale Diner</title>
+<meta name="description" content="Order Brookdale Diner food directly to your room at the Historic Brookdale Lodge." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23DC2626'/%3E%3Ctext y='46' x='6' font-size='32' fill='%23fff' font-family='Georgia' font-weight='900'%3EBD%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Playfair+Display+SC:wght@400;700;900&family=Karla:wght@300;400;500;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#ffffff; --bg:#FFF8F0; --bg-2:#FEF2F2; --bg-3:#FFEDD5;
+    --red:#DC2626; --red-deep:#B91C1C; --red-bright:#EF4444;
+    --red-tint:rgba(220,38,38,.08);
+    --black:#0A0A0A; --ink:#1f1a18; --ink-2:#3f3835; --grey:#6b6360;
+    --line:#e5dfd6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Karla', system-ui, sans-serif;
+    color:var(--ink); background:var(--bg);
+    line-height:1.6; font-size:17px;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--red); text-decoration:none}
+  a:hover{color:var(--red-deep)}
+  button{font-family:inherit; cursor:pointer}
+  ::selection{background:var(--red); color:var(--white)}
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{ animation-duration:.01ms!important; transition-duration:.01ms!important }
+  }
+
+  /* TOP BAR / NAV */
+  .topbar{
+    background:var(--black); color:var(--white);
+    text-align:center; padding:9px 20px;
+    font-size:13px; font-weight:600; letter-spacing:3px;
+    text-transform:uppercase;
+  }
+  .topbar .star{ color:var(--red); margin:0 10px }
+
+  nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,248,240,.96); backdrop-filter:blur(10px);
+    border-bottom:2px solid var(--red);
+    padding:14px 28px;
+    display:flex; align-items:center; justify-content:space-between; gap:18px;
+  }
+  nav .logo{
+    font-family:'Playfair Display SC', serif; font-weight:900;
+    color:var(--black); font-size:22px; letter-spacing:3px;
+  }
+  nav .logo span{ color:var(--red) }
+  nav ul{ list-style:none; display:flex; gap:30px }
+  nav ul a{
+    color:var(--black);
+    font-family:'Playfair Display SC', serif; font-weight:700;
+    font-size:13px; letter-spacing:2px;
+    padding:6px 0; border-bottom:2px solid transparent;
+    transition: all .2s;
+  }
+  nav ul a:hover{ color:var(--red); border-color:var(--red) }
+  nav .call-cta{
+    background:var(--red); color:var(--white);
+    padding:10px 22px; border:2px solid var(--red); border-radius:40px;
+    font-family:'Playfair Display SC', serif; font-weight:700;
+    font-size:13px; letter-spacing:2px;
+    transition: all .2s;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  nav .call-cta:hover{ background:var(--red-deep); border-color:var(--red-deep); color:var(--white) }
+  nav .call-cta svg{ width:14px; height:14px }
+  @media (max-width:880px){ nav ul{display:none}; nav{padding:12px 16px}; nav .call-cta{padding:9px 14px; font-size:12px} }
+
+  /* HERO STRIP */
+  .order-hero{
+    background:var(--black); color:var(--white);
+    padding:60px 24px 50px; text-align:center;
+    border-bottom:6px solid var(--red);
+    position:relative; overflow:hidden;
+  }
+  .order-hero::after{
+    content:''; position:absolute; left:0; right:0; bottom:-3px; height:32px;
+    background-image:
+      linear-gradient(45deg, var(--white) 25%, transparent 25%),
+      linear-gradient(-45deg, var(--white) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, var(--white) 75%),
+      linear-gradient(-45deg, transparent 75%, var(--white) 75%);
+    background-size:32px 32px;
+    background-position:0 0, 0 16px, 16px -16px, 16px 0;
+    background-color:var(--black);
+  }
+  .order-hero .eyebrow{
+    color:var(--red-bright); letter-spacing:6px; font-size:13px;
+    text-transform:uppercase; font-weight:700;
+    margin-bottom:14px;
+  }
+  .order-hero h1{
+    font-family:'Abril Fatface', serif;
+    font-size: clamp(48px, 7vw, 84px);
+    color:var(--white); line-height:1;
+  }
+  .order-hero h1 em{ font-family:'Caveat', cursive; font-style:normal; color:var(--red-bright); font-weight:700 }
+  .order-hero p{
+    margin:18px auto 0; max-width:640px;
+    font-size:18px; color:#d6cdbf;
+  }
+  .order-hero .badges{
+    margin-top:24px;
+    display:flex; gap:14px; flex-wrap:wrap; justify-content:center;
+  }
+  .order-hero .badges span{
+    font-family:'Playfair Display SC', serif; font-weight:700;
+    font-size:11px; letter-spacing:3px;
+    padding:8px 16px; border:1px solid var(--red);
+    border-radius:30px; color:var(--white);
+    text-transform:uppercase;
+  }
+
+  /* LAYOUT */
+  .order-layout{
+    max-width:1240px; margin:50px auto;
+    padding:0 24px 80px;
+    display:grid; grid-template-columns: 1.6fr 1fr; gap:40px;
+    align-items:start;
+  }
+  @media (max-width:980px){
+    .order-layout{ grid-template-columns:1fr; gap:24px }
+    .cart-panel{ position:static!important }
+  }
+
+  /* MENU SIDE */
+  .pill-row{
+    display:flex; gap:10px; flex-wrap:wrap;
+    margin-bottom:24px;
+  }
+  .pill{
+    padding:10px 22px;
+    border:2px solid var(--black); border-radius:40px;
+    background:var(--white); color:var(--black);
+    font-family:'Playfair Display SC', serif; font-weight:700;
+    letter-spacing:2px; font-size:12px;
+    text-transform:uppercase;
+    transition: all .2s; min-height:44px;
+  }
+  .pill:hover{ background:var(--bg-2); border-color:var(--red); color:var(--red) }
+  .pill:focus-visible{ outline:3px solid var(--red); outline-offset:3px }
+  .pill.active{
+    background:var(--red); color:var(--white); border-color:var(--red);
+    box-shadow:0 4px 12px rgba(220,38,38,.3);
+  }
+
+  .platos-label{
+    font-family:'Playfair Display SC', serif; font-weight:700;
+    color:var(--red); letter-spacing:6px; font-size:13px;
+    text-transform:uppercase; margin: 18px 0 10px;
+    display:flex; align-items:center; gap:14px;
+  }
+  .platos-label::after{
+    content:''; height:1px; background:var(--red); flex:1;
+  }
+  .menu-note{
+    color:var(--ink-2); font-style:italic; font-size:14px;
+    background:var(--white); padding:12px 16px; border-left:3px solid var(--red);
+    margin-bottom:18px; border-radius:4px;
+  }
+
+  .item-list{ display:grid; gap:8px }
+  .o-item{
+    background:var(--white);
+    border:2px solid var(--line);
+    border-radius:8px;
+    padding:16px 18px;
+    display:grid; grid-template-columns: 1fr auto; gap:18px; align-items:center;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .o-item:hover{ border-color:var(--red); box-shadow:0 4px 12px rgba(0,0,0,.06) }
+  .o-item .name{
+    font-family:'Playfair Display SC', serif; font-weight:700;
+    color:var(--black); font-size:16px; letter-spacing:1.5px;
+  }
+  .o-item .desc{
+    color:var(--ink-2); font-size:14px; font-style:italic; margin-top:3px;
+  }
+  .o-item .price{
+    font-family:'Abril Fatface', serif; color:var(--red); font-size:20px;
+    margin-top:4px; display:inline-block;
+  }
+  .add-btn{
+    background:var(--red); color:var(--white); border:none;
+    padding:10px 18px; border-radius:30px;
+    font-family:'Playfair Display SC', serif; font-weight:700;
+    letter-spacing:2px; font-size:11px; text-transform:uppercase;
+    min-height:44px; display:inline-flex; align-items:center; gap:6px;
+    transition: background .15s, transform .15s;
+  }
+  .add-btn:hover{ background:var(--red-deep); transform:translateY(-1px) }
+  .add-btn:focus-visible{ outline:3px solid var(--black); outline-offset:3px }
+  .add-btn svg{ width:14px; height:14px }
+  .qty-stepper{
+    display:inline-flex; align-items:center; gap:0;
+    border:2px solid var(--red); border-radius:30px;
+    overflow:hidden; background:var(--white);
+  }
+  .qty-stepper button{
+    background:var(--white); color:var(--red); border:none;
+    width:36px; height:36px; font-size:18px; font-weight:700;
+    transition: background .15s, color .15s;
+  }
+  .qty-stepper button:hover{ background:var(--red); color:var(--white) }
+  .qty-stepper .q{
+    font-family:'Abril Fatface', serif; color:var(--red);
+    font-size:18px; padding:0 12px; min-width:32px; text-align:center;
+  }
+
+  /* CART SIDE */
+  .cart-panel{
+    position:sticky; top:90px;
+    background:var(--white);
+    border:3px solid var(--black);
+    box-shadow: 8px 8px 0 var(--red);
+    padding:28px;
+    border-radius:8px;
+  }
+  .cart-panel h2{
+    font-family:'Abril Fatface', serif;
+    font-size:38px; color:var(--black); margin-bottom:6px;
+  }
+  .cart-panel .sub{
+    color:var(--ink-2); font-size:14px; font-style:italic; margin-bottom:18px;
+  }
+  .cart-list{
+    list-style:none; max-height:300px; overflow-y:auto;
+    margin-bottom:18px;
+    border-top:1px solid var(--line);
+  }
+  .cart-list li{
+    display:grid; grid-template-columns: 1fr auto auto; gap:12px;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px dashed var(--line);
+    font-size:14px;
+  }
+  .cart-list li .n{ font-family:'Playfair Display SC',serif; font-weight:700; letter-spacing:1px; font-size:13px }
+  .cart-list li .p{ font-family:'Abril Fatface',serif; color:var(--red); font-size:18px }
+  .cart-list .empty{
+    color:var(--grey); font-style:italic; text-align:center;
+    grid-column:1/-1; padding:30px 0;
+  }
+  .cart-list .qbox{
+    display:inline-flex; align-items:center; border:1px solid var(--line); border-radius:20px;
+  }
+  .cart-list .qbox button{
+    background:transparent; color:var(--red); border:none;
+    width:24px; height:28px; font-weight:700;
+  }
+  .cart-list .qbox span{ padding: 0 6px; font-weight:700 }
+
+  .cart-total{
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding:16px 0; border-top:2px solid var(--black); border-bottom:2px solid var(--black);
+    font-family:'Playfair Display SC',serif; font-weight:700; letter-spacing:2px;
+    font-size:14px; text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  .cart-total .amt{ font-family:'Abril Fatface',serif; color:var(--red); font-size:30px }
+
+  .field{ margin-bottom:14px }
+  .field label{
+    display:block;
+    font-family:'Playfair Display SC',serif; font-weight:700;
+    font-size:11px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--ink); margin-bottom:6px;
+  }
+  .field input, .field select, .field textarea{
+    width:100%; padding:11px 14px;
+    border:2px solid var(--line); border-radius:6px;
+    background:var(--bg); color:var(--ink);
+    font-family:'Karla',sans-serif; font-size:15px;
+    transition:border-color .15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    border-color:var(--red); outline:none;
+  }
+  .field textarea{ resize:vertical; min-height:60px }
+  .field .hint{ font-size:12px; color:var(--grey); margin-top:4px; font-style:italic }
+
+  .pay-options{ display:flex; gap:10px; margin-bottom:18px }
+  .pay-opt{
+    flex:1;
+    padding:11px 8px;
+    border:2px solid var(--line); border-radius:6px;
+    background:var(--white); cursor:pointer;
+    text-align:center;
+    font-family:'Playfair Display SC',serif; font-weight:700;
+    font-size:11px; letter-spacing:2px; text-transform:uppercase;
+    transition: all .15s;
+  }
+  .pay-opt:hover{ border-color:var(--red); color:var(--red) }
+  .pay-opt.active{ background:var(--red); color:var(--white); border-color:var(--red) }
+
+  .submit-btn{
+    width:100%;
+    background:var(--red); color:var(--white); border:none;
+    padding:18px; border-radius:30px;
+    font-family:'Playfair Display SC',serif; font-weight:700;
+    letter-spacing:3px; font-size:14px; text-transform:uppercase;
+    transition: all .2s;
+    display:inline-flex; align-items:center; justify-content:center; gap:10px;
+    min-height:50px;
+  }
+  .submit-btn:hover:not(:disabled){ background:var(--red-deep); transform:translateY(-2px); box-shadow:0 8px 20px rgba(220,38,38,.4) }
+  .submit-btn:disabled{ background:var(--grey); cursor:not-allowed; opacity:.6 }
+  .submit-btn svg{ width:16px; height:16px }
+
+  .send-options{ display:none; margin-top:18px; padding-top:18px; border-top:2px dashed var(--line) }
+  .send-options.show{ display:block }
+  .send-options p{
+    font-family:'Karla',sans-serif; font-size:13px; color:var(--ink-2);
+    margin-bottom:12px; line-height:1.5;
+  }
+  .send-grid{ display:grid; gap:8px }
+  .send-btn{
+    display:flex; align-items:center; gap:12px;
+    padding:14px 18px;
+    border:2px solid var(--black); border-radius:8px;
+    background:var(--white); color:var(--black);
+    font-family:'Playfair Display SC',serif; font-weight:700;
+    letter-spacing:2px; font-size:13px; text-transform:uppercase;
+    transition: all .15s; text-decoration:none;
+  }
+  .send-btn:hover{ background:var(--black); color:var(--white) }
+  .send-btn svg{ width:18px; height:18px; flex-shrink:0 }
+  .send-btn.primary{ background:var(--red); color:var(--white); border-color:var(--red) }
+  .send-btn.primary:hover{ background:var(--red-deep); border-color:var(--red-deep) }
+  .send-btn small{
+    display:block; font-size:10px; font-weight:400; letter-spacing:1px; opacity:.8;
+    text-transform:none; font-style:italic; margin-top:2px;
+  }
+
+  /* INFO STRIPS */
+  .info-strip{
+    background:var(--bg-2);
+    padding:30px 24px;
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+  }
+  .info-grid{
+    max-width:1200px; margin:0 auto;
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:24px;
+  }
+  .info-cell{
+    text-align:center;
+  }
+  .info-cell .ico{
+    width:48px; height:48px; margin:0 auto 12px;
+    background:var(--red); color:var(--white);
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+  }
+  .info-cell .ico svg{ width:22px; height:22px }
+  .info-cell h4{
+    font-family:'Playfair Display SC',serif; font-weight:700;
+    font-size:13px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--black); margin-bottom:6px;
+  }
+  .info-cell p{ color:var(--ink-2); font-size:14px; line-height:1.5 }
+
+  /* FOOTER (slim) */
+  footer{
+    background:var(--white); padding:40px 24px; text-align:center;
+    border-top:6px solid var(--red);
+  }
+  footer .brand{
+    font-family:'Abril Fatface', serif;
+    color:var(--red); font-size:36px;
+    text-shadow: 3px 3px 0 var(--black);
+  }
+  footer .brand .amp{
+    font-family:'Caveat', cursive; color:var(--black);
+    font-size:.6em; margin: 0 10px; text-shadow:none;
+  }
+  footer .legal{
+    color:var(--grey); font-size:12px; letter-spacing:2px; margin-top:14px;
+  }
+  footer a{ color:var(--ink) }
+  footer a:hover{ color:var(--red) }
+
+  /* mobile cart drawer */
+  .mobile-cart-fab{
+    display:none;
+    position:fixed; bottom:20px; left:20px; right:20px;
+    background:var(--red); color:var(--white); border:none;
+    padding:16px;
+    border-radius:40px;
+    font-family:'Playfair Display SC',serif; font-weight:700;
+    letter-spacing:3px; font-size:13px; text-transform:uppercase;
+    z-index:60;
+    box-shadow:0 8px 24px rgba(220,38,38,.5);
+    align-items:center; justify-content:space-between;
+  }
+  .mobile-cart-fab .count{
+    background:var(--white); color:var(--red);
+    padding:4px 12px; border-radius:20px; font-size:13px;
+  }
+  @media (max-width:980px){
+    .cart-panel.has-items + .nope, .mobile-cart-fab.show{ display:flex }
+  }
+</style>
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <defs>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+    </symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+      <line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+      <polyline points="22,6 12,13 2,6"/>
+    </symbol>
+    <symbol id="i-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <span class="star">★</span> Lodge Room Service <span class="star">★</span> Brookdale Diner <span class="star">★</span> Right Downstairs <span class="star">★</span>
+</div>
+
+<nav>
+  <a href="index.html" class="logo">Brookdale <span>★</span> Diner</a>
+  <ul>
+    <li><a href="index.html#menu">Full Menu</a></li>
+    <li><a href="index.html#history">History</a></li>
+    <li><a href="index.html#visit">Visit</a></li>
+  </ul>
+  <a class="call-cta" href="tel:+18316096126">
+    <svg aria-hidden="true"><use href="#i-phone"/></svg>
+    (831) 609-6126
+  </a>
+</nav>
+
+<header class="order-hero">
+  <div class="eyebrow">Staying at the Lodge?</div>
+  <h1>Lodge <em>Room</em> Service</h1>
+  <p>Order direct from the Brookdale Diner. We'll bring it up in to-go containers — straight to your room at the Historic Brookdale Lodge.</p>
+  <div class="badges">
+    <span>★ Same Building</span>
+    <span>★ ~25 min</span>
+    <span>★ Pay on Delivery</span>
+    <span>★ Charge to Room Available</span>
+  </div>
+</header>
+
+<div class="info-strip">
+  <div class="info-grid">
+    <div class="info-cell">
+      <div class="ico"><svg aria-hidden="true"><use href="#i-bag"/></svg></div>
+      <h4>1. Pick Your Food</h4>
+      <p>Same diner menu, packed in our to-go containers.</p>
+    </div>
+    <div class="info-cell">
+      <div class="ico"><svg aria-hidden="true"><use href="#i-bell"/></svg></div>
+      <h4>2. Tell Us Your Room</h4>
+      <p>Lodge guests only. Enter your room number, name, and any notes for the kitchen.</p>
+    </div>
+    <div class="info-cell">
+      <div class="ico"><svg aria-hidden="true"><use href="#i-clock"/></svg></div>
+      <h4>3. About 25 Minutes</h4>
+      <p>We knock and hand it off. Pay on delivery (cash/card) or charge to your room.</p>
+    </div>
+  </div>
+</div>
+
+<main class="order-layout">
+
+  <section aria-label="Menu">
+    <div class="pill-row" role="tablist">
+      <button class="pill active" data-cat="breakfast" role="tab">Breakfast</button>
+      <button class="pill" data-cat="burgers" role="tab">Burgers</button>
+      <button class="pill" data-cat="plates" role="tab">Plates</button>
+      <button class="pill" data-cat="shakes" role="tab">Shakes</button>
+      <button class="pill" data-cat="sides" role="tab">Sides</button>
+    </div>
+
+    <div id="menuMount"></div>
+  </section>
+
+  <aside class="cart-panel" id="cartPanel" aria-label="Your order">
+    <h2>Your Order</h2>
+    <p class="sub">Lodge Room Service · Brookdale Diner</p>
+
+    <ul class="cart-list" id="cartList">
+      <li class="empty">No items yet — tap "Add" on the left to start.</li>
+    </ul>
+
+    <div class="cart-total">
+      <span>Subtotal</span>
+      <span class="amt" id="cartTotal">$0.00</span>
+    </div>
+
+    <div class="field">
+      <label for="roomNum">Lodge Room # *</label>
+      <input id="roomNum" type="text" placeholder="e.g. 207" autocomplete="off" required>
+      <div class="hint">Lodge guests only. We'll deliver to this room.</div>
+    </div>
+
+    <div class="field">
+      <label for="guestName">Your Name *</label>
+      <input id="guestName" type="text" placeholder="First &amp; last" autocomplete="name" required>
+    </div>
+
+    <div class="field">
+      <label for="phone">Phone (optional)</label>
+      <input id="phone" type="tel" placeholder="(xxx) xxx-xxxx" autocomplete="tel">
+      <div class="hint">In case the kitchen has a question.</div>
+    </div>
+
+    <div class="field">
+      <label>Payment</label>
+      <div class="pay-options" role="radiogroup" aria-label="Payment method">
+        <button type="button" class="pay-opt active" data-pay="room" role="radio" aria-checked="true">Charge to Room</button>
+        <button type="button" class="pay-opt" data-pay="cash" role="radio" aria-checked="false">Cash on Delivery</button>
+        <button type="button" class="pay-opt" data-pay="card" role="radio" aria-checked="false">Card on Delivery</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="notes">Special Instructions</label>
+      <textarea id="notes" placeholder="Allergies, no onions, leave at door, etc."></textarea>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" disabled>
+      <svg aria-hidden="true"><use href="#i-check"/></svg>
+      <span id="submitLabel">Add Items to Continue</span>
+    </button>
+
+    <div class="send-options" id="sendOptions">
+      <p><b>Almost there!</b> Send your order to the diner kitchen — they'll start cooking right away. Pick whichever option you've got handy:</p>
+      <div class="send-grid">
+        <a class="send-btn primary" id="sendCall" href="#">
+          <svg aria-hidden="true"><use href="#i-phone"/></svg>
+          <span>Call the Diner<small>Read your order to the kitchen — fastest</small></span>
+        </a>
+        <a class="send-btn" id="sendSMS" href="#">
+          <svg aria-hidden="true"><use href="#i-msg"/></svg>
+          <span>Text the Order<small>Pre-filled SMS — just hit send</small></span>
+        </a>
+        <a class="send-btn" id="sendEmail" href="#">
+          <svg aria-hidden="true"><use href="#i-mail"/></svg>
+          <span>Email the Order<small>Pre-filled email to the kitchen</small></span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+</main>
+
+<footer>
+  <div class="brand">Brookdale<span class="amp">&amp;</span>Diner</div>
+  <div style="font-family:'Playfair Display SC',serif; font-weight:700; letter-spacing:3px; font-size:12px; text-transform:uppercase; margin-top:6px">
+    at the Historic Brookdale Lodge
+  </div>
+  <div class="legal">© 2026 BROOKDALE DINER · ALL RIGHTS RESERVED · <a href="index.html">Back to Home</a></div>
+</footer>
+
+<script>
+// =======================================================
+// MENU DATA
+// =======================================================
+const MENU = {
+  breakfast: {
+    label: 'Breakfast — All Day',
+    note: 'Served with hash browns or house potatoes, fruit, and choice of toast (where applicable).',
+    sections: [
+      { name: 'Capone Classics', items: [
+        ['Two Eggs', 'Any style.', 12],
+        ['Bacon & Eggs', 'Two eggs any style with three slices of bacon.', 15],
+        ['Sausage & Eggs', 'Two eggs any style with two generous links.', 15],
+        ['Avocado Toast', 'Two eggs and salt & peppered avocado, olive oil drizzle.', 13],
+        ['Biscuits & Gravy', 'Two biscuits with sausage gravy.', 17],
+        ['Chicken Fried Steak', 'Crispy fried steak, country gravy, two eggs.', 18],
+        ['Corned Beef Hash', 'Potatoes & onions, two eggs on top.', 17],
+        ['Frittata', 'Bacon, mushrooms, tomatoes, mozzarella — open-faced.', 18],
+      ]},
+      { name: 'Old School Omelettes', items: [
+        ['Italian Omelette', 'Mushrooms, pesto, mozzarella.', 19],
+        ['Ham, Spinach & Tomato Omelette', 'Monterey Jack cheese.', 18],
+        ['Bay Shrimp Omelette', 'Bay shrimp, white mushrooms, Swiss, avocado.', 18],
+        ['Custom Omelette', 'Three-egg with cheese — note add-ins below.', 15],
+      ]},
+      { name: "Dean's Diner Scrambles", items: [
+        ['Brookdale Scramble', 'Zucchini, peppers, onion, broccoli, feta.', 17],
+        ['Vegetarian Scramble', 'Zucchini, peppers, onions, mozzarella.', 17],
+        ["Farmer's Scramble", 'Spinach, mushrooms, bacon.', 17],
+        ['Meat Lovers Scramble', 'Ham, bacon, sausage, peppers, tomato, cheddar.', 19],
+        ['Denver Scramble', 'Ham, onions, bell peppers.', 17],
+        ['Turkey Avocado Scramble', 'Turkey, spinach, mushroom, mozzarella, avocado.', 17],
+        ['Chorizo Onion Scramble', 'House chorizo and sweet onion.', 18],
+      ]},
+      { name: 'Beatnik Benedicts', items: [
+        ['Classic Benedict', 'Ham, two poached eggs, hollandaise.', 17],
+        ['Vegetarian Benedict', 'Zucchini, mushrooms, peppers, poached eggs, hollandaise.', 17],
+      ]},
+      { name: 'Gangster Griddles', items: [
+        ['Pancakes', 'Three per order. Add $3 for a five-stack.', 13],
+        ['Waffles', 'Two per order.', 12],
+        ['French Toast', 'Three slices per order.', 13],
+        ['Mini Waffles', 'Four per order.', 8],
+      ]},
+    ]
+  },
+  burgers: {
+    label: 'Legendary Burgers',
+    note: 'Served with thin-cut fries on a brioche bun. Sub steak-cut, sweet potato fries, onion rings, or salad +$2.',
+    sections: [
+      { name: '', items: [
+        ['The Brookdale Burger', "Beef patty, lettuce, tomato, Brookdale's secret sauce.", 16],
+        ['Cheeseburger', 'American, cheddar, swiss, or pepper jack.', 17],
+        ['Bacon Cheeseburger', 'Thick-cut applewood bacon.', 19],
+        ['Patty Melt', 'Beef patty, swiss, grilled onions, toasted rye.', 18],
+        ['Mushroom Swiss Burger', 'Sautéed crimini, melted swiss, garlic aioli.', 18],
+        ['Club Sandwich', 'Roast turkey, bacon, lettuce, tomato, mayo on sourdough.', 17],
+      ]}
+    ]
+  },
+  plates: {
+    label: 'The Plate',
+    note: 'Lunch & dinner. Served with seasonal vegetables and your choice of side.',
+    sections: [
+      { name: '', items: [
+        ['Fried Chicken', "Crispy outside, juicy inside. Like grandma's.", 22],
+        ['Ribeye Steak', 'Hand-cut, char-grilled, red wine demi-glace.', 32],
+        ['Pork Chop', 'Bone-in, brown butter sauce.', 24],
+        ['Flatbread Pizza', 'Wood-fired-style flatbread, classic toppings.', 16],
+        ['Caesar Salad', 'Romaine, parmesan, croutons. Add chicken +$5.', 14],
+        ['Cobb Salad', 'Greens, bacon, blue cheese, avocado, egg, chicken.', 16],
+      ]}
+    ]
+  },
+  shakes: {
+    label: 'Shakes & Sweets',
+    note: "Made with five scoops of Marianne's Ice Cream — Santa Cruz tradition since 1947.",
+    sections: [
+      { name: '', items: [
+        ['Classic Milkshake', 'Vanilla, chocolate, or strawberry.', 8],
+        ['Specialty Shake', 'Cookies-and-cream, mint chip, salted caramel, peanut butter.', 10],
+        ['Sundae', 'Hot fudge or strawberry, whipped cream, cherry.', 9],
+        ['Single Scoop Cone', "Marianne's, in a fresh waffle cone.", 5],
+        ['Double Scoop Cone', 'Two flavors side by side.', 8],
+        ['Root Beer Float', 'Two scoops, root beer.', 8],
+      ]}
+    ]
+  },
+  sides: {
+    label: 'Sides',
+    note: '',
+    sections: [
+      { name: '', items: [
+        ['Bacon (3 strips)', 'Made to order.', 4],
+        ['Sausage (3 links)', '', 4],
+        ['Biscuits & Gravy (1)', '', 4],
+        ['Hash Browns', 'Crispy, golden, salted.', 5],
+        ['House Potatoes', 'Diced, herbed, griddled.', 5],
+        ['Cottage Cheese', '', 5],
+        ['Avocado', 'Sliced and salted.', 3],
+        ['Corned Beef Hash', 'House-shredded.', 5],
+        ['Toast', 'White, wheat, sourdough, rye, or English muffin.', 2],
+        ['Fruit Cup', 'Seasonal mountain fruit.', 6],
+        ['Sweet Potato Fries', '', 7],
+        ['Onion Rings', '', 7],
+        ['Side Salad', '', 7],
+      ]}
+    ]
+  }
+};
+
+// =======================================================
+// CART
+// =======================================================
+const cart = new Map(); // name -> {price, qty, desc}
+const STORAGE_KEY = 'brookdale_cart_v1';
+
+function saveCart(){
+  const data = {
+    items: Array.from(cart.entries()).map(([n, v])=>[n, v]),
+    room: roomEl.value, name: nameEl.value, phone: phoneEl.value,
+    notes: notesEl.value, pay: currentPay,
+  };
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e){}
+}
+function loadCart(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+    (data.items||[]).forEach(([n, v])=>cart.set(n, v));
+    if (data.room) roomEl.value = data.room;
+    if (data.name) nameEl.value = data.name;
+    if (data.phone) phoneEl.value = data.phone;
+    if (data.notes) notesEl.value = data.notes;
+    if (data.pay) setPay(data.pay);
+  } catch(e){}
+}
+
+function addToCart(name, price, desc){
+  if (cart.has(name)){ cart.get(name).qty += 1; }
+  else { cart.set(name, { price, qty:1, desc }); }
+  renderCart(); renderMenu(currentCat); saveCart();
+}
+function setQty(name, q){
+  if (q <= 0) cart.delete(name);
+  else cart.get(name).qty = q;
+  renderCart(); renderMenu(currentCat); saveCart();
+}
+function totalCents(){
+  let cents = 0;
+  cart.forEach(v => { cents += Math.round(v.price * 100) * v.qty; });
+  return cents;
+}
+function fmt(cents){ return '$' + (cents/100).toFixed(2); }
+
+// =======================================================
+// RENDER
+// =======================================================
+const mount = document.getElementById('menuMount');
+let currentCat = 'breakfast';
+
+function renderMenu(cat){
+  currentCat = cat;
+  const data = MENU[cat];
+  let html = '';
+  if (data.note) html += `<div class="menu-note">${data.note}</div>`;
+  data.sections.forEach(section => {
+    if (section.name) html += `<div class="platos-label">${section.name}</div>`;
+    html += `<div class="item-list">`;
+    section.items.forEach(([name, desc, price]) => {
+      const inCart = cart.get(name);
+      const right = inCart
+        ? `<div class="qty-stepper" role="group" aria-label="Quantity for ${name}">
+             <button type="button" data-act="dec" data-name="${escapeAttr(name)}" aria-label="Remove one">−</button>
+             <span class="q">${inCart.qty}</span>
+             <button type="button" data-act="inc" data-name="${escapeAttr(name)}" data-price="${price}" data-desc="${escapeAttr(desc)}" aria-label="Add one">+</button>
+           </div>`
+        : `<button type="button" class="add-btn" data-act="add" data-name="${escapeAttr(name)}" data-price="${price}" data-desc="${escapeAttr(desc)}">
+             <svg aria-hidden="true"><use href="#i-plus"/></svg> Add
+           </button>`;
+      html += `<div class="o-item">
+        <div>
+          <div class="name">${name}</div>
+          ${desc ? `<div class="desc">${desc}</div>` : ''}
+          <span class="price">$${price}</span>
+        </div>
+        ${right}
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  mount.innerHTML = html;
+}
+
+function renderCart(){
+  const list = document.getElementById('cartList');
+  if (cart.size === 0){
+    list.innerHTML = `<li class="empty">No items yet — tap "Add" on the left to start.</li>`;
+  } else {
+    let h = '';
+    cart.forEach((v, name) => {
+      h += `<li>
+        <span class="n">${name}<br><small style="font-weight:400; color:var(--ink-2); font-size:12px">$${v.price.toFixed(2)} ea</small></span>
+        <span class="qbox">
+          <button type="button" data-act="dec" data-name="${escapeAttr(name)}">−</button>
+          <span>${v.qty}</span>
+          <button type="button" data-act="inc" data-name="${escapeAttr(name)}" data-price="${v.price}">+</button>
+        </span>
+        <span class="p">$${(v.price*v.qty).toFixed(2)}</span>
+      </li>`;
+    });
+    list.innerHTML = h;
+  }
+  document.getElementById('cartTotal').textContent = fmt(totalCents());
+  updateSubmitState();
+}
+
+function escapeAttr(s){ return String(s).replace(/"/g, '&quot;'); }
+
+// =======================================================
+// EVENT DELEGATION (menu + cart)
+// =======================================================
+document.addEventListener('click', e=>{
+  const b = e.target.closest('[data-act]');
+  if (!b) return;
+  const act = b.dataset.act;
+  const name = b.dataset.name;
+  const price = parseFloat(b.dataset.price);
+  const desc = b.dataset.desc;
+  if (act === 'add' || act === 'inc'){
+    addToCart(name, price, desc);
+  } else if (act === 'dec'){
+    const item = cart.get(name);
+    if (item) setQty(name, item.qty - 1);
+  }
+});
+
+// Pill tabs
+document.querySelectorAll('.pill').forEach(p=>{
+  p.addEventListener('click', ()=>{
+    document.querySelectorAll('.pill').forEach(o=>o.classList.toggle('active', o===p));
+    renderMenu(p.dataset.cat);
+  });
+});
+
+// =======================================================
+// FORM
+// =======================================================
+const roomEl = document.getElementById('roomNum');
+const nameEl = document.getElementById('guestName');
+const phoneEl = document.getElementById('phone');
+const notesEl = document.getElementById('notes');
+const submitBtn = document.getElementById('submitBtn');
+const submitLabel = document.getElementById('submitLabel');
+let currentPay = 'room';
+
+function setPay(p){
+  currentPay = p;
+  document.querySelectorAll('.pay-opt').forEach(o=>{
+    const on = o.dataset.pay === p;
+    o.classList.toggle('active', on);
+    o.setAttribute('aria-checked', on ? 'true' : 'false');
+  });
+  saveCart();
+}
+document.querySelectorAll('.pay-opt').forEach(o=>{
+  o.addEventListener('click', ()=>setPay(o.dataset.pay));
+});
+
+[roomEl, nameEl, phoneEl, notesEl].forEach(el=>{
+  el.addEventListener('input', ()=>{ saveCart(); updateSubmitState(); });
+});
+
+function updateSubmitState(){
+  const hasItems = cart.size > 0;
+  const hasRoom = roomEl.value.trim().length > 0;
+  const hasName = nameEl.value.trim().length > 0;
+  const ok = hasItems && hasRoom && hasName;
+  submitBtn.disabled = !ok;
+  if (!hasItems) submitLabel.textContent = 'Add items to continue';
+  else if (!hasRoom) submitLabel.textContent = 'Enter your room number';
+  else if (!hasName) submitLabel.textContent = 'Enter your name';
+  else submitLabel.textContent = `Send Order · ${fmt(totalCents())}`;
+}
+
+// =======================================================
+// SUBMIT — open send options
+// =======================================================
+submitBtn.addEventListener('click', ()=>{
+  if (submitBtn.disabled) return;
+  const orderText = buildOrderText();
+
+  const phone = '+18316096126';
+  document.getElementById('sendCall').href = 'tel:' + phone;
+  document.getElementById('sendSMS').href = 'sms:' + phone + (navigator.userAgent.match(/iPhone|iPad/) ? '&' : '?') + 'body=' + encodeURIComponent(orderText);
+  document.getElementById('sendEmail').href = 'mailto:orders@brookdalediner.net?subject=' +
+    encodeURIComponent(`Lodge Room Service — Room ${roomEl.value.trim()}`) +
+    '&body=' + encodeURIComponent(orderText);
+
+  document.getElementById('sendOptions').classList.add('show');
+  document.getElementById('sendOptions').scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+function buildOrderText(){
+  const lines = [];
+  lines.push('★ BROOKDALE DINER — LODGE ROOM SERVICE ★');
+  lines.push('');
+  lines.push(`Guest: ${nameEl.value.trim()}`);
+  lines.push(`Lodge Room #: ${roomEl.value.trim()}`);
+  if (phoneEl.value.trim()) lines.push(`Phone: ${phoneEl.value.trim()}`);
+  const payLabel = currentPay === 'room' ? 'Charge to Room' :
+                   currentPay === 'cash' ? 'Cash on Delivery' : 'Card on Delivery';
+  lines.push(`Payment: ${payLabel}`);
+  lines.push('');
+  lines.push('--- ORDER ---');
+  cart.forEach((v, name)=>{
+    lines.push(`${v.qty} × ${name}  ($${(v.price*v.qty).toFixed(2)})`);
+  });
+  lines.push('-------------');
+  lines.push(`TOTAL: ${fmt(totalCents())}`);
+  if (notesEl.value.trim()){
+    lines.push('');
+    lines.push('Special Instructions:');
+    lines.push(notesEl.value.trim());
+  }
+  lines.push('');
+  lines.push('Thank you!');
+  return lines.join('\n');
+}
+
+// =======================================================
+// INIT
+// =======================================================
+loadCart();
+renderMenu('breakfast');
+renderCart();
+updateSubmitState();
+</script>
+</body>
+</html>
