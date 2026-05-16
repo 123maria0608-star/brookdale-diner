@@ -500,47 +500,38 @@
 <!-- QR Code library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-/* ============================================================
-   BROOKDALE DINER — QR Payment Page
-   ============================================================
-   CONFIGURE YOUR PAYMENT HANDLES HERE:
-   ============================================================ */
-const CONFIG = {
-  venmoHandle:   'BrookdaleDiner',       // ← Your Venmo @username (without @)
-  cashappHandle: 'BrookdaleDiner',       // ← Your Cash App $cashtag (without $)
-  zellePhone:    '8315550100',           // ← Your Zelle phone (digits only)
-  zelleDisplay:  '(831) 555-0100',       // ← Your Zelle phone (formatted for display)
-};
-/* ============================================================ */
+// Read params baked in by admin.html QR generator
+// ?z=ZELLE_HANDLE  ?zn=DISPLAY_NAME  ?t=TABLE_LABEL
+const params      = new URLSearchParams(window.location.search);
+const zelleHandle = params.get('z')  || '';
+const zelleName   = params.get('zn') || 'Brookdale Diner';
+const tableLabel  = params.get('t')  || '';
 
-// Parse URL params
-const params = new URLSearchParams(window.location.search);
-const tableNum = params.get('table') || '';
-
-// Show table badge if table param present
-if (tableNum) {
+// Table badge
+if (tableLabel) {
   document.getElementById('table-badge').style.display = 'inline-flex';
-  document.getElementById('table-num').textContent = tableNum;
-  document.getElementById('note-text').textContent = `Table ${tableNum} – Brookdale Diner`;
+  document.getElementById('table-num').textContent = tableLabel;
+  document.getElementById('note-text').textContent = `${tableLabel} – Brookdale Diner`;
 }
 
-// Payment URLs
-const noteText = tableNum ? `Table ${tableNum} – Brookdale Diner` : 'Brookdale Diner';
-const noteEncoded = encodeURIComponent(noteText);
+// Zelle
+if (zelleHandle) {
+  document.getElementById('zelle-display').textContent      = zelleHandle;
+  document.getElementById('zelle-phone-display').textContent = zelleHandle;
+} else {
+  document.getElementById('zelle-phone-display').textContent = 'Ask your server';
+}
 
-const VENMO_URL  = `https://venmo.com/${CONFIG.venmoHandle}?txn=pay&note=${noteEncoded}`;
-const CASHAPP_URL = `https://cash.app/$${CONFIG.cashappHandle}`;
-const ZELLE_TEL  = `tel:+1${CONFIG.zellePhone}`;
-
-// Populate handles
-document.getElementById('venmo-handle').textContent   = `@${CONFIG.venmoHandle}`;
-document.getElementById('cashapp-handle').textContent = `$${CONFIG.cashappHandle}`;
-document.getElementById('zelle-display').textContent  = CONFIG.zelleDisplay;
-document.getElementById('zelle-phone-display').textContent = CONFIG.zelleDisplay;
-
-// Set button href
+// Venmo / Cash App — not configured via admin yet; show placeholder state
+const VENMO_URL   = 'https://venmo.com/';
+const CASHAPP_URL = 'https://cash.app/';
+document.getElementById('venmo-handle').textContent   = 'Ask your server';
+document.getElementById('cashapp-handle').textContent = 'Ask your server';
 document.getElementById('venmo-btn').href   = VENMO_URL;
 document.getElementById('cashapp-btn').href = CASHAPP_URL;
+
+const noteText   = tableLabel ? `${tableLabel} – Brookdale Diner` : zelleName || 'Brookdale Diner';
+const ZELLE_TEL  = zelleHandle ? `tel:${zelleHandle.replace(/\D/g,'')}` : '#';
 
 // Generate QR codes
 function makeQR(elId, url, darkColor) {
