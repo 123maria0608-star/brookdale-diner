@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Brookdale Diner — Payment Setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Playfair+Display+SC:wght@700;900&family=Karla:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF8F0; --white:#fff;
+  --red:#DC2626; --red-deep:#B91C1C;
+  --black:#0A0A0A; --ink:#1f1a18;
+  --grey:#6b6360; --line:#e5dfd6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:17px;-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+input{font-family:inherit}
+
+#lock{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:32px 20px;text-align:center;background:var(--black);
+}
+#lock .logo{font-family:'Abril Fatface',serif;font-size:40px;color:var(--red);margin-bottom:4px}
+#lock .sub{font-family:'Playfair Display SC',serif;font-weight:700;font-size:10px;letter-spacing:4px;color:#666;text-transform:uppercase;margin-bottom:36px}
+#lock .card{
+  background:var(--white);border-radius:18px;padding:34px 28px;
+  width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+#lock .card h2{font-family:'Playfair Display SC',serif;font-weight:900;font-size:17px;letter-spacing:2px;margin-bottom:20px}
+#lock input{
+  width:100%;padding:14px;border:2px solid var(--line);border-radius:10px;
+  font-size:22px;letter-spacing:8px;text-align:center;color:var(--ink);
+  background:var(--bg);transition:border-color .2s;margin-bottom:12px;
+}
+#lock input:focus{outline:none;border-color:var(--red)}
+#lock .btn{
+  width:100%;padding:15px;background:var(--red);color:#fff;
+  border:none;border-radius:10px;
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:14px;letter-spacing:3px;text-transform:uppercase;
+}
+#lock .btn:hover{background:var(--red-deep)}
+#lock .err{color:var(--red);font-size:13px;font-weight:700;margin-top:10px;display:none}
+
+#admin{display:none;max-width:480px;margin:0 auto;padding:40px 24px 60px}
+
+.admin-logo{text-align:center;margin-bottom:32px}
+.admin-logo .name{font-family:'Abril Fatface',serif;font-size:30px;color:var(--red)}
+.admin-logo .tag{font-family:'Playfair Display SC',serif;font-weight:700;font-size:10px;letter-spacing:4px;color:var(--grey);text-transform:uppercase;margin-top:2px}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--grey);margin-bottom:6px}
+.field input{
+  width:100%;padding:14px 16px;border:2px solid var(--line);border-radius:10px;
+  font-size:17px;color:var(--ink);background:var(--white);transition:border-color .2s;
+}
+.field input:focus{outline:none;border-color:var(--red)}
+.field .hint{font-size:13px;color:var(--grey);margin-top:5px}
+
+.gen-btn{
+  width:100%;padding:18px;background:var(--red);color:#fff;
+  border:none;border-radius:12px;
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:15px;letter-spacing:3px;text-transform:uppercase;
+  margin-top:8px;transition:background .2s,transform .1s;
+}
+.gen-btn:hover{background:var(--red-deep)}
+.gen-btn:active{transform:scale(.98)}
+
+#output{display:none;margin-top:36px}
+
+.qr-result{
+  background:var(--white);border:3px solid var(--black);
+  border-radius:18px;overflow:hidden;text-align:center;
+}
+.qr-result .top{background:var(--black);padding:16px}
+.qr-result .top .dn{font-family:'Abril Fatface',serif;font-size:22px;color:var(--red)}
+.qr-result .top .ds{font-family:'Playfair Display SC',serif;font-weight:700;font-size:9px;letter-spacing:3px;color:#777;text-transform:uppercase;margin-top:2px}
+
+.qr-result .mid{padding:22px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.qr-result .scan-lbl{font-family:'Playfair Display SC',serif;font-weight:700;font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--grey)}
+.qr-result .qr-box{padding:8px;border:2px solid var(--line);border-radius:10px;display:inline-flex}
+.qr-result .qr-box canvas,.qr-result .qr-box img{display:block;width:200px!important;height:200px!important}
+
+.qr-result .bot{background:var(--red);padding:14px 16px}
+.qr-result .bot .pl{font-family:'Playfair Display SC',serif;font-weight:700;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.65)}
+.qr-result .bot .ph{font-family:'Abril Fatface',serif;font-size:26px;color:#fff;letter-spacing:1px;word-break:break-all}
+.qr-result .bot .ps{font-size:11px;color:rgba(255,255,255,.7);margin-top:2px;font-weight:700;letter-spacing:1px}
+
+.print-btn{
+  width:100%;padding:17px;background:var(--black);color:#fff;
+  border:none;border-radius:12px;
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:15px;letter-spacing:3px;text-transform:uppercase;
+  margin-top:14px;transition:background .2s;
+}
+.print-btn:hover{background:#333}
+
+.url-hint{
+  margin-top:12px;padding:12px 16px;
+  background:var(--white);border:1px solid var(--line);border-radius:8px;
+  font-size:12px;color:var(--grey);word-break:break-all;text-align:center;
+}
+
+@media print{
+  #lock,#admin .field,.gen-btn,.print-btn,.url-hint,.admin-logo,.field{display:none!important}
+  #admin{display:block!important;max-width:100%;padding:0}
+  #output{display:block!important}
+  .qr-result{border-width:2px;max-width:320px;margin:0 auto}
+  body{background:#fff}
+  @page{size:letter;margin:.5in}
+}
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <div class="logo">Brookdale Diner</div>
+  <div class="sub">Staff Access</div>
+  <div class="card">
+    <h2>Enter Passcode</h2>
+    <input type="password" id="pc" placeholder="••••••••" maxlength="12"
+           autocomplete="off" onkeydown="if(event.key==='Enter')unlock()"/>
+    <button class="btn" onclick="unlock()">Unlock</button>
+    <div class="err" id="err">Wrong passcode</div>
+  </div>
+</div>
+
+<div id="admin">
+  <div class="admin-logo">
+    <div class="name">Brookdale Diner</div>
+    <div class="tag">Payment QR Setup</div>
+  </div>
+
+  <div class="field">
+    <label>Your Zelle Phone or Email</label>
+    <input type="text" id="zHandle" placeholder="e.g. (831) 555-0100"/>
+    <p class="hint">Customers will send payment to this number or email</p>
+  </div>
+
+  <div class="field">
+    <label>Your Name (shows in Zelle)</label>
+    <input type="text" id="zName" placeholder="Brookdale Diner" value="Brookdale Diner"/>
+  </div>
+
+  <div class="field">
+    <label>Site URL (already filled in)</label>
+    <input type="text" id="siteUrl" value="https://123maria0608-star.github.io/brookdale-diner/pay.html"/>
+  </div>
+
+  <button class="gen-btn" onclick="generate()">Generate QR Code</button>
+
+  <div id="output">
+    <div class="qr-result">
+      <div class="top">
+        <div class="dn">Brookdale Diner</div>
+        <div class="ds">Historic Brookdale Lodge &middot; Brookdale, CA</div>
+      </div>
+      <div class="mid">
+        <span class="scan-lbl">Scan to Pay</span>
+        <div class="qr-box" id="qr-out"></div>
+      </div>
+      <div class="bot">
+        <div class="pl">Send Zelle to</div>
+        <div class="ph" id="qr-label"></div>
+        <div class="ps">Open your bank app &rarr; Zelle &rarr; send amount</div>
+      </div>
+    </div>
+    <button class="print-btn" onclick="window.print()">Print This QR Code</button>
+    <div class="url-hint" id="url-hint"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+function unlock() {
+  if (document.getElementById('pc').value.trim() === 'diner2890') {
+    document.getElementById('lock').style.display = 'none';
+    document.getElementById('admin').style.display = 'block';
+  } else {
+    const e = document.getElementById('err');
+    e.style.display = 'block';
+    document.getElementById('pc').value = '';
+    setTimeout(() => e.style.display = 'none', 2500);
+  }
+}
+
+function generate() {
+  const handle  = document.getElementById('zHandle').value.trim();
+  const name    = document.getElementById('zName').value.trim() || 'Brookdale Diner';
+  const siteUrl = document.getElementById('siteUrl').value.trim() || 'pay.html';
+
+  if (!handle) {
+    alert('Enter your Zelle phone or email first.');
+    document.getElementById('zHandle').focus();
+    return;
+  }
+
+  const sep = siteUrl.includes('?') ? '&' : '?';
+  const url = siteUrl + sep + 'z=' + encodeURIComponent(handle) + '&zn=' + encodeURIComponent(name);
+
+  document.getElementById('qr-label').textContent = handle;
+  document.getElementById('url-hint').textContent = url;
+
+  const box = document.getElementById('qr-out');
+  box.innerHTML = '';
+  try {
+    new QRCode(box, { text: url, width: 200, height: 200,
+      colorDark: '#0A0A0A', colorLight: '#FFFFFF',
+      correctLevel: QRCode.CorrectLevel.M });
+  } catch(e) { box.textContent = url; }
+
+  document.getElementById('output').style.display = 'block';
+  document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+</body>
+</html>
