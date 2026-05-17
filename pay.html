@@ -1,615 +1,213 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-<title>Pay Your Check — Brookdale Diner</title>
-<meta name="description" content="Pay your Brookdale Diner check via Venmo, Cash App, Zelle, or Apple Pay." />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23DC2626'/%3E%3Ctext y='46' x='6' font-size='32' fill='%23fff' font-family='Georgia' font-weight='900'%3EBD%3C/text%3E%3C/svg%3E" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Pay — Brookdale Diner</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Playfair+Display+SC:wght@400;700;900&family=Karla:wght@300;400;500;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Playfair+Display+SC:wght@700;900&family=Karla:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --white:#ffffff;
-    --bg:#FFF8F0;
-    --bg-2:#FEF2F2;
-    --red:#DC2626;
-    --red-deep:#B91C1C;
-    --red-bright:#EF4444;
-    --red-tint:rgba(220,38,38,.08);
-    --black:#0A0A0A;
-    --ink:#1f1a18;
-    --ink-2:#3f3835;
-    --grey:#6b6360;
-    --line:#e5dfd6;
-    --green:#16a34a;
-    --green-light:#dcfce7;
-    --blue:#2563eb;
-    --blue-light:#dbeafe;
-    --purple:#7c3aed;
-    --purple-light:#ede9fe;
-    --cashapp:#00d632;
-    --cashapp-dark:#00a827;
-    --venmo:#3d95ce;
-    --venmo-dark:#2c7ab8;
-    --zelle:#6b21a8;
-    --zelle-dark:#581c87;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{
-    font-family:'Karla',system-ui,sans-serif;
-    color:var(--ink);
-    background:var(--bg);
-    line-height:1.6;
-    font-size:17px;
-    -webkit-font-smoothing:antialiased;
-    min-height:100vh;
-  }
-  a{color:var(--red);text-decoration:none;transition:color .2s}
-  button{font-family:inherit;cursor:pointer}
-  ::selection{background:var(--red);color:var(--white)}
+:root{
+  --bg:#FFF8F0; --white:#fff;
+  --red:#DC2626; --red-deep:#B91C1C;
+  --black:#0A0A0A; --ink:#1f1a18; --grey:#6b6360; --line:#e5dfd6;
+  --zelle:#6b21a8; --venmo:#3d95ce; --cashapp:#00a827;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Karla',system-ui,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased}
+::selection{background:var(--red);color:#fff}
 
-  /* ── TOP BAR ── */
-  .topbar{
-    background:var(--black);color:var(--white);
-    text-align:center;padding:9px 20px;
-    font-size:12px;font-weight:700;letter-spacing:3px;
-    text-transform:uppercase;
-  }
-  .topbar .star{color:var(--red);margin:0 8px}
+.hero{
+  background:var(--black);padding:40px 24px 34px;text-align:center;
+  border-bottom:4px solid var(--red);
+  position:relative;overflow:hidden;
+}
+.hero::after{
+  content:'';position:absolute;left:0;right:0;bottom:-2px;height:20px;
+  background-image:
+    linear-gradient(45deg,var(--bg) 25%,transparent 25%),
+    linear-gradient(-45deg,var(--bg) 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,var(--bg) 75%),
+    linear-gradient(-45deg,transparent 75%,var(--bg) 75%);
+  background-size:20px 20px;background-position:0 0,0 10px,10px -10px,10px 0;
+  background-color:var(--black);
+}
+.hero .dn{font-family:'Abril Fatface',serif;font-size:30px;color:var(--red);margin-bottom:4px}
+.hero .tag{font-family:'Playfair Display SC',serif;font-weight:700;font-size:10px;letter-spacing:4px;color:#777;text-transform:uppercase;margin-bottom:16px}
+.hero h1{font-family:'Abril Fatface',serif;font-size:clamp(38px,9vw,64px);color:#fff;line-height:1}
+.hero p{margin:10px auto 0;max-width:420px;font-size:14px;color:#d6cdbf}
 
-  /* ── NAV ── */
-  nav{
-    background:rgba(255,248,240,.97);backdrop-filter:blur(10px);
-    border-bottom:3px solid var(--red);
-    padding:14px 24px;
-    display:flex;align-items:center;justify-content:space-between;gap:16px;
-  }
-  .logo{
-    font-family:'Playfair Display SC',serif;font-weight:900;
-    color:var(--black);font-size:20px;letter-spacing:3px;
-    text-decoration:none;
-  }
-  .logo span{color:var(--red)}
-  .nav-back{
-    background:none;border:2px solid var(--line);border-radius:40px;
-    padding:8px 18px;font-size:13px;font-weight:700;
-    color:var(--ink);letter-spacing:1px;
-    transition:all .2s;display:flex;align-items:center;gap:6px;
-  }
-  .nav-back:hover{border-color:var(--red);color:var(--red)}
-  .nav-back svg{width:14px;height:14px}
+main{max-width:480px;margin:0 auto;padding:28px 20px 60px}
 
-  /* ── HERO ── */
-  .hero{
-    background:var(--black);color:var(--white);
-    padding:48px 24px 42px;text-align:center;
-    border-bottom:5px solid var(--red);
-    position:relative;overflow:hidden;
-  }
-  .hero::after{
-    content:'';position:absolute;left:0;right:0;bottom:-2px;height:24px;
-    background-image:
-      linear-gradient(45deg,var(--bg) 25%,transparent 25%),
-      linear-gradient(-45deg,var(--bg) 25%,transparent 25%),
-      linear-gradient(45deg,transparent 75%,var(--bg) 75%),
-      linear-gradient(-45deg,transparent 75%,var(--bg) 75%);
-    background-size:24px 24px;
-    background-position:0 0,0 12px,12px -12px,12px 0;
-    background-color:var(--black);
-  }
-  .hero .eyebrow{
-    color:var(--red-bright);letter-spacing:6px;font-size:12px;
-    text-transform:uppercase;font-weight:700;margin-bottom:10px;
-  }
-  .hero h1{
-    font-family:'Abril Fatface',serif;
-    font-size:clamp(38px,8vw,66px);
-    color:var(--white);line-height:1.05;
-  }
-  .hero h1 em{font-family:'Caveat',cursive;font-style:normal;color:var(--red-bright)}
-  .hero p{margin:14px auto 0;max-width:500px;font-size:16px;color:#d6cdbf}
+.section-label{
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:12px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--grey);text-align:center;margin-bottom:18px;
+}
 
-  /* table badge */
-  .table-badge{
-    display:inline-flex;align-items:center;gap:10px;
-    margin-top:22px;
-    background:rgba(220,38,38,.2);border:1px solid var(--red);
-    border-radius:40px;padding:10px 22px;
-  }
-  .table-badge .icon{font-size:20px}
-  .table-badge .label{
-    font-family:'Playfair Display SC',serif;font-weight:700;
-    letter-spacing:3px;font-size:13px;color:var(--white);
-    text-transform:uppercase;
-  }
-  .table-badge .num{
-    font-family:'Abril Fatface',serif;font-size:22px;color:var(--red-bright);
-  }
+/* ── PAYMENT CARDS ── */
+.pay-card{
+  border-radius:16px;overflow:hidden;margin-bottom:14px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08);
+  transition:transform .15s,box-shadow .15s;
+}
+.pay-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.14)}
+.pay-card:active{transform:scale(.98)}
 
-  /* ── MAIN LAYOUT ── */
-  main{max-width:600px;margin:0 auto;padding:32px 20px 60px}
+.card-inner{padding:20px 22px;display:flex;align-items:center;gap:16px;background:var(--white);border:2px solid var(--line)}
+.card-inner.z{border-color:#d8b4fe}
+.card-inner.v{border-color:#93c5fd}
+.card-inner.c{border-color:#86efac}
 
-  /* ── STEP LABEL ── */
-  .step-label{
-    text-align:center;margin-bottom:22px;
-  }
-  .step-label h2{
-    font-family:'Playfair Display SC',serif;font-weight:900;
-    font-size:20px;letter-spacing:2px;color:var(--ink);
-  }
-  .step-label p{font-size:15px;color:var(--grey);margin-top:4px}
+.card-logo{
+  width:54px;height:54px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;font-weight:900;font-size:22px;color:#fff;
+  font-family:'Playfair Display SC',serif;letter-spacing:1px;
+}
+.logo-z{background:var(--zelle)}
+.logo-v{background:var(--venmo)}
+.logo-c{background:var(--cashapp)}
 
-  /* ── PAYMENT CARDS ── */
-  .payment-grid{display:grid;gap:14px}
+.card-text{flex:1;min-width:0}
+.card-name{font-family:'Playfair Display SC',serif;font-weight:900;font-size:17px;letter-spacing:2px}
+.card-name.z{color:var(--zelle)}
+.card-name.v{color:var(--venmo)}
+.card-name.c{color:#15803d}
+.card-handle{font-size:18px;font-weight:700;color:var(--ink);margin-top:2px;word-break:break-all}
+.card-sub{font-size:12px;color:var(--grey);margin-top:2px}
 
-  .pay-card{
-    background:var(--white);
-    border:2px solid var(--line);
-    border-radius:16px;
-    overflow:hidden;
-    transition:border-color .2s,transform .15s,box-shadow .2s;
-    cursor:pointer;
-  }
-  .pay-card:hover{
-    transform:translateY(-2px);
-    box-shadow:0 8px 24px rgba(0,0,0,.1);
-  }
-  .pay-card:active{transform:translateY(0)}
+.card-btn{
+  padding:16px 22px;display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#fff;
+  text-decoration:none;border-top:2px solid rgba(0,0,0,.06);
+  transition:filter .2s;
+}
+.card-btn:hover{filter:brightness(.9)}
+.btn-z{background:var(--zelle)}
+.btn-v{background:var(--venmo)}
+.btn-c{background:var(--cashapp)}
 
-  .pay-card .card-header{
-    display:flex;align-items:center;gap:14px;
-    padding:20px 22px 16px;
-  }
-  .pay-card .card-icon{
-    width:52px;height:52px;border-radius:14px;
-    display:flex;align-items:center;justify-content:center;
-    flex-shrink:0;font-size:26px;
-    box-shadow:0 2px 8px rgba(0,0,0,.12);
-  }
-  .pay-card .card-title{
-    font-family:'Playfair Display SC',serif;font-weight:700;
-    font-size:17px;letter-spacing:2px;
-  }
-  .pay-card .card-sub{font-size:13px;color:var(--grey);margin-top:2px}
-  .pay-card .card-handle{
-    font-family:'Caveat',cursive;font-size:20px;
-    font-weight:700;color:var(--ink-2);
-  }
+/* No-handle state */
+.not-set{
+  opacity:.45;pointer-events:none;
+  position:relative;
+}
+.not-set::after{
+  content:'Not set up yet';
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:rgba(0,0,0,.6);color:#fff;padding:6px 14px;border-radius:20px;
+  font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+}
 
-  .pay-card .card-body{
-    padding:0 22px 20px;
-    display:flex;align-items:center;justify-content:space-between;
-    gap:16px;
-  }
-  .pay-card .qr-wrap{
-    width:100px;height:100px;flex-shrink:0;
-    border-radius:8px;overflow:hidden;
-    background:var(--white);padding:4px;
-    border:1px solid var(--line);
-  }
-  .pay-card .qr-wrap img,
-  .pay-card .qr-wrap canvas{
-    width:92px!important;height:92px!important;
-    display:block;
-  }
+/* ── HOW TO ── */
+.how-box{
+  background:var(--white);border:2px solid var(--line);
+  border-radius:14px;padding:18px 20px;margin-top:8px;
+}
+.how-box h3{
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--red);margin-bottom:12px;
+}
+.how-steps{list-style:none;display:grid;gap:8px}
+.how-steps li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--grey)}
+.how-steps .n{
+  width:22px;height:22px;background:var(--red);color:#fff;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:11px;flex-shrink:0;margin-top:1px;
+}
 
-  .pay-card .open-btn{
-    flex:1;padding:16px 20px;
-    border:none;border-radius:12px;
-    font-family:'Playfair Display SC',serif;font-weight:700;
-    font-size:14px;letter-spacing:2px;text-transform:uppercase;
-    color:var(--white);
-    display:flex;align-items:center;justify-content:center;gap:8px;
-    text-decoration:none;
-    transition:opacity .2s,transform .1s;
-    min-height:56px;
-  }
-  .pay-card .open-btn:hover{opacity:.9}
-  .pay-card .open-btn:active{transform:scale(.97)}
-  .open-btn svg{width:18px;height:18px;flex-shrink:0}
-
-  /* ── VENMO ── */
-  #card-venmo{border-color:#3d95ce22}
-  #card-venmo:hover{border-color:var(--venmo)}
-  #card-venmo .card-icon{background:#3d95ce}
-  #card-venmo .card-title{color:var(--venmo-dark)}
-  #card-venmo .open-btn{background:var(--venmo)}
-  #card-venmo .open-btn:hover{background:var(--venmo-dark)}
-
-  /* ── CASH APP ── */
-  #card-cashapp{border-color:#00d63222}
-  #card-cashapp:hover{border-color:var(--cashapp)}
-  #card-cashapp .card-icon{background:var(--cashapp)}
-  #card-cashapp .card-title{color:var(--cashapp-dark)}
-  #card-cashapp .open-btn{background:var(--cashapp)}
-  #card-cashapp .open-btn:hover{background:var(--cashapp-dark)}
-
-  /* ── ZELLE ── */
-  #card-zelle{border-color:#6b21a822}
-  #card-zelle:hover{border-color:var(--zelle)}
-  #card-zelle .card-icon{background:var(--zelle)}
-  #card-zelle .card-title{color:var(--zelle-dark)}
-  #card-zelle .open-btn{background:var(--zelle)}
-  #card-zelle .open-btn:hover{background:var(--zelle-dark)}
-
-  /* ── APPLE PAY ── */
-  #card-applepay{border-color:#00000022}
-  #card-applepay:hover{border-color:var(--black)}
-  #card-applepay .card-icon{background:var(--black)}
-  #card-applepay .card-title{color:var(--black)}
-  #card-applepay .open-btn{background:var(--black)}
-  #card-applepay .open-btn:hover{background:#333}
-
-  /* Apple Pay native button */
-  apple-pay-button{
-    --apple-pay-button-width:100%;
-    --apple-pay-button-height:56px;
-    --apple-pay-button-border-radius:12px;
-    --apple-pay-button-padding:6px 16px;
-    --apple-pay-button-box-sizing:border-box;
-    display:block;
-  }
-  .applepay-fallback{
-    flex:1;padding:16px 20px;
-    border:2px solid var(--black);border-radius:12px;
-    background:var(--white);color:var(--black);
-    font-family:'Playfair Display SC',serif;font-weight:700;
-    font-size:14px;letter-spacing:2px;text-transform:uppercase;
-    display:flex;align-items:center;justify-content:center;gap:8px;
-    cursor:default;opacity:.55;
-    min-height:56px;
-  }
-  .applepay-note{
-    font-size:12px;color:var(--grey);margin-top:10px;
-    text-align:center;font-style:italic;
-  }
-
-  /* ── ZELLE PHONE DISPLAY ── */
-  .zelle-phone-box{
-    flex:1;
-    background:#f5f0ff;border:1px solid #d8b4fe;border-radius:12px;
-    padding:14px 16px;text-align:center;
-    display:flex;flex-direction:column;align-items:center;gap:4px;
-  }
-  .zelle-phone-box .ph-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--zelle);text-transform:uppercase}
-  .zelle-phone-box .ph-num{
-    font-family:'Abril Fatface',serif;font-size:22px;color:var(--zelle-dark);
-    letter-spacing:1px;
-  }
-  .zelle-phone-box .ph-sub{font-size:12px;color:var(--grey)}
-
-  /* ── DIVIDER ── */
-  .or-divider{
-    text-align:center;color:var(--grey);font-size:13px;font-weight:700;
-    letter-spacing:3px;text-transform:uppercase;
-    position:relative;margin:8px 0;
-  }
-  .or-divider::before,.or-divider::after{
-    content:'';position:absolute;top:50%;
-    width:calc(50% - 24px);height:1px;background:var(--line);
-  }
-  .or-divider::before{left:0}
-  .or-divider::after{right:0}
-
-  /* ── INSTRUCTIONS ── */
-  .instructions{
-    background:var(--white);border:2px solid var(--line);border-radius:16px;
-    padding:22px 24px;margin-top:24px;
-  }
-  .instructions h3{
-    font-family:'Playfair Display SC',serif;font-weight:700;
-    font-size:14px;letter-spacing:3px;color:var(--red);
-    text-transform:uppercase;margin-bottom:14px;
-  }
-  .steps-list{list-style:none;display:grid;gap:10px}
-  .steps-list li{
-    display:flex;align-items:flex-start;gap:12px;
-    font-size:15px;color:var(--ink-2);
-  }
-  .steps-list .num{
-    width:26px;height:26px;
-    background:var(--red);color:var(--white);
-    border-radius:50%;display:flex;align-items:center;justify-content:center;
-    font-weight:700;font-size:13px;flex-shrink:0;margin-top:1px;
-  }
-
-  /* ── FOOTER ── */
-  footer{
-    background:var(--black);color:var(--white);
-    text-align:center;padding:28px 20px;
-    font-size:14px;
-  }
-  footer .diner-name{
-    font-family:'Abril Fatface',serif;font-size:24px;
-    color:var(--red);letter-spacing:2px;
-    display:block;margin-bottom:6px;
-  }
-  footer p{color:#a09890;font-size:13px}
-
-  @media(max-width:480px){
-    .pay-card .card-body{flex-direction:column;align-items:stretch}
-    .pay-card .qr-wrap{width:100%;height:auto;display:flex;justify-content:center;padding:10px}
-    .pay-card .qr-wrap img,.pay-card .qr-wrap canvas{width:120px!important;height:120px!important}
-    .zelle-phone-box{width:100%}
-  }
+footer{background:var(--black);text-align:center;padding:24px 20px}
+footer .fn{font-family:'Abril Fatface',serif;font-size:22px;color:var(--red);display:block;margin-bottom:4px}
+footer p{font-size:12px;color:#666}
 </style>
 </head>
 <body>
 
-<div class="topbar">
-  <span class="star">★</span> Brookdale Diner — Historic Brookdale Lodge <span class="star">★</span>
-</div>
-
-<nav>
-  <a href="index.html" class="logo">Brookdale <span>&</span> Diner</a>
-  <a href="index.html" class="nav-back">
-    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/></svg>
-    Back
-  </a>
-</nav>
-
 <section class="hero">
-  <div class="eyebrow">Contactless Payment</div>
-  <h1>Pay Your <em>Check</em></h1>
-  <p>Choose your preferred payment method below — fast, safe, and no card required.</p>
-  <div class="table-badge" id="table-badge" style="display:none">
-    <span class="icon">🪑</span>
-    <span class="label">Table</span>
-    <span class="num" id="table-num"></span>
-  </div>
+  <div class="dn">Brookdale Diner</div>
+  <div class="tag">Historic Brookdale Lodge</div>
+  <h1>Pay Here</h1>
+  <p>Pick your payment app below, send the amount Jr told you, and you're done.</p>
 </section>
 
 <main>
+  <p class="section-label">Choose Your Payment Method</p>
 
-  <div class="step-label">
-    <h2>Select Payment Method</h2>
-    <p>Tap a button to open the app, or scan the QR with your camera</p>
+  <!-- ZELLE -->
+  <div class="pay-card" id="card-z">
+    <div class="card-inner z">
+      <div class="card-logo logo-z">Z</div>
+      <div class="card-text">
+        <div class="card-name z">Zelle</div>
+        <div class="card-handle" id="z-handle">—</div>
+        <div class="card-sub">Open your bank app → Zelle → send</div>
+      </div>
+    </div>
+    <a class="card-btn btn-z" id="z-btn" href="#">Open Bank App / Zelle ›</a>
   </div>
 
-  <div class="payment-grid">
-
-    <!-- ── VENMO ── -->
-    <div class="pay-card" id="card-venmo">
-      <div class="card-header">
-        <div class="card-icon">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M23.5 5c.8 1.3 1.1 2.7 1.1 4.4 0 5.5-4.7 12.6-8.5 17.6H7.4L4 7.7l7.1-.7 1.8 14.5c1.7-2.8 3.7-7.1 3.7-10.1 0-1.6-.3-2.7-.7-3.6L23.5 5z" fill="white"/>
-          </svg>
-        </div>
-        <div>
-          <div class="card-title">Venmo</div>
-          <div class="card-handle" id="venmo-handle">@BrookdaleDiner</div>
-          <div class="card-sub">Tap to open · Or scan QR</div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="qr-wrap" id="qr-venmo"></div>
-        <a class="open-btn" id="venmo-btn" href="#" target="_blank" rel="noopener">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
-          Open Venmo
-        </a>
+  <!-- VENMO -->
+  <div class="pay-card" id="card-v">
+    <div class="card-inner v">
+      <div class="card-logo logo-v">V</div>
+      <div class="card-text">
+        <div class="card-name v">Venmo</div>
+        <div class="card-handle" id="v-handle">—</div>
+        <div class="card-sub">Open Venmo → search this handle → send</div>
       </div>
     </div>
-
-    <!-- ── CASH APP ── -->
-    <div class="pay-card" id="card-cashapp">
-      <div class="card-header">
-        <div class="card-icon">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M14.7 13.1l-.7-.2c-1.7-.5-2.3-.9-2.3-1.7 0-.9.8-1.5 2.2-1.5 1.3 0 2.1.5 2.4 1.5l2.7-.8c-.5-1.9-1.8-3.1-3.9-3.5V5h-2.5v2c-2.4.5-4 2-4 4.2 0 2.5 1.9 3.6 4.6 4.4l.7.2c1.9.6 2.5 1.1 2.5 1.9 0 1-.9 1.6-2.4 1.6-1.7 0-2.7-.7-3-2l-2.8.8c.6 2.2 2.2 3.6 4.6 4V24h2.5v-2c2.7-.5 4.3-2.1 4.3-4.5 0-2.5-1.7-3.7-4.9-4.4z" fill="black"/>
-          </svg>
-        </div>
-        <div>
-          <div class="card-title">Cash App</div>
-          <div class="card-handle" id="cashapp-handle">$BrookdaleDiner</div>
-          <div class="card-sub">Tap to open · Or scan QR</div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="qr-wrap" id="qr-cashapp"></div>
-        <a class="open-btn" id="cashapp-btn" href="#" target="_blank" rel="noopener">
-          <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/></svg>
-          Open Cash App
-        </a>
-      </div>
-    </div>
-
-    <!-- ── ZELLE ── -->
-    <div class="pay-card" id="card-zelle">
-      <div class="card-header">
-        <div class="card-icon">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M7 8h10.5l-9 12H18" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div>
-          <div class="card-title">Zelle</div>
-          <div class="card-handle" id="zelle-display">see number below</div>
-          <div class="card-sub">Open your bank app → Zelle</div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="qr-wrap" id="qr-zelle"></div>
-        <div class="zelle-phone-box">
-          <div class="ph-label">Send to</div>
-          <div class="ph-num" id="zelle-phone-display">(831) 555-0100</div>
-          <div class="ph-sub">Open your bank app → Zelle</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── APPLE PAY ── -->
-    <div class="pay-card" id="card-applepay">
-      <div class="card-header">
-        <div class="card-icon">
-          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-            <path d="M17.5 6.5c-1.1 1.3-2.9 2.3-4.5 2.2-.2-1.8.6-3.6 1.6-4.8C15.8 2.6 17.7 1.6 19 1.5c.2 1.9-.5 3.7-1.5 5zM19.1 9.1c-2.5-.1-4.6 1.4-5.8 1.4-1.2 0-3.1-1.3-5.1-1.3C5.3 9.3 2.5 11.4 2.5 15.9c0 2.7.8 5.5 1.9 7.3 1 1.6 1.9 2.8 3.2 2.8 1.3 0 1.8-.8 3.5-.8 1.7 0 2.1.8 3.6.8 1.4 0 2.3-1.3 3.2-2.7.9-1.5 1.4-3 1.4-3.1-.1 0-2.8-1.1-2.8-4.1 0-2.6 2.1-3.8 2.2-3.9-.9-1.6-2.5-1.9-3.1-2.1-.2.0-.5 0-.5 0z" fill="white"/>
-          </svg>
-        </div>
-        <div>
-          <div class="card-title">Apple Pay</div>
-          <div class="card-handle">Tap to Pay</div>
-          <div class="card-sub">Available on iPhone &amp; Safari</div>
-        </div>
-      </div>
-      <div class="card-body" id="applepay-body">
-        <div class="applepay-fallback" id="applepay-fallback">
-          <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-          Not available on this device
-        </div>
-      </div>
-      <p class="applepay-note" id="applepay-note">Ask your server to Tap to Pay with their iPhone — no card needed!</p>
-    </div>
-
+    <a class="card-btn btn-v" id="v-btn" href="#">Open Venmo ›</a>
   </div>
 
-  <!-- ── INSTRUCTIONS ── -->
-  <div class="instructions">
-    <h3>How It Works</h3>
-    <ul class="steps-list">
-      <li>
-        <span class="num">1</span>
-        <span>Tap your preferred payment method above to open the app</span>
-      </li>
-      <li>
-        <span class="num">2</span>
-        <span>Send the exact amount your server quoted you to the handle/number shown</span>
-      </li>
-      <li>
-        <span class="num">3</span>
-        <span>Add <strong id="note-text">Brookdale Diner</strong> in the memo/note field</span>
-      </li>
-      <li>
-        <span class="num">4</span>
-        <span>Show your server the <strong>Payment Sent</strong> confirmation screen — you're done!</span>
-      </li>
+  <!-- CASH APP -->
+  <div class="pay-card" id="card-c">
+    <div class="card-inner c">
+      <div class="card-logo logo-c">$</div>
+      <div class="card-text">
+        <div class="card-name c">Cash App</div>
+        <div class="card-handle" id="c-handle">—</div>
+        <div class="card-sub">Open Cash App → search this $tag → send</div>
+      </div>
+    </div>
+    <a class="card-btn btn-c" id="c-btn" href="#">Open Cash App ›</a>
+  </div>
+
+  <div class="how-box">
+    <h3>How to Pay</h3>
+    <ul class="how-steps">
+      <li><span class="n">1</span>Tap the payment method you use above</li>
+      <li><span class="n">2</span>Search for the handle shown and send the amount Jr told you</li>
+      <li><span class="n">3</span>Show Jr the "Payment Sent" screen — that's it!</li>
     </ul>
   </div>
-
 </main>
 
 <footer>
-  <span class="diner-name">Brookdale Diner</span>
-  <p>Historic Brookdale Lodge · 11570 CA-9, Brookdale, CA 95007</p>
-  <p style="margin-top:6px">Thank you for dining with us! 🍔</p>
+  <span class="fn">Brookdale Diner</span>
+  <p>11570 CA-9, Brookdale, CA · Thank you!</p>
 </footer>
 
-<!-- QR Code library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-// Read params baked in by admin.html QR generator
-// ?z=ZELLE_HANDLE  ?zn=DISPLAY_NAME  ?t=TABLE_LABEL
-const params      = new URLSearchParams(window.location.search);
-const zelleHandle = params.get('z')  || '';
-const zelleName   = params.get('zn') || 'Brookdale Diner';
-const tableLabel  = params.get('t')  || '';
+const P = new URLSearchParams(location.search);
+const z = P.get('z') || '';
+const v = P.get('v') || '';
+const c = P.get('c') || '';
 
-// Table badge
-if (tableLabel) {
-  document.getElementById('table-badge').style.display = 'inline-flex';
-  document.getElementById('table-num').textContent = tableLabel;
-  document.getElementById('note-text').textContent = `${tableLabel} – Brookdale Diner`;
+function setup(id, btnId, cardId, handle, href) {
+  const card = document.getElementById(cardId);
+  if (!handle) { card.classList.add('not-set'); return; }
+  document.getElementById(id).textContent = handle;
+  const btn = document.getElementById(btnId);
+  btn.href = href;
 }
 
-// Zelle
-if (zelleHandle) {
-  document.getElementById('zelle-display').textContent      = zelleHandle;
-  document.getElementById('zelle-phone-display').textContent = zelleHandle;
-} else {
-  document.getElementById('zelle-phone-display').textContent = 'Ask your server';
-}
-
-// Venmo / Cash App — not configured via admin yet; show placeholder state
-const VENMO_URL   = 'https://venmo.com/';
-const CASHAPP_URL = 'https://cash.app/';
-document.getElementById('venmo-handle').textContent   = 'Ask your server';
-document.getElementById('cashapp-handle').textContent = 'Ask your server';
-document.getElementById('venmo-btn').href   = VENMO_URL;
-document.getElementById('cashapp-btn').href = CASHAPP_URL;
-
-const noteText   = tableLabel ? `${tableLabel} – Brookdale Diner` : zelleName || 'Brookdale Diner';
-const ZELLE_TEL  = zelleHandle ? `tel:${zelleHandle.replace(/\D/g,'')}` : '#';
-
-// Generate QR codes
-function makeQR(elId, url, darkColor) {
-  const el = document.getElementById(elId);
-  if (!el) return;
-  try {
-    new QRCode(el, {
-      text: url,
-      width: 92,
-      height: 92,
-      colorDark: darkColor || '#0A0A0A',
-      colorLight: '#FFFFFF',
-      correctLevel: QRCode.CorrectLevel.M
-    });
-  } catch(e) {
-    el.innerHTML = `<div style="width:92px;height:92px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888;text-align:center;padding:8px">QR unavailable</div>`;
-  }
-}
-
-makeQR('qr-venmo',   VENMO_URL,   '#3d95ce');
-makeQR('qr-cashapp', CASHAPP_URL, '#00a827');
-makeQR('qr-zelle',   ZELLE_TEL,   '#6b21a8');
-
-// Apple Pay — Payment Request API
-(async () => {
-  if (!window.PaymentRequest) return;
-
-  try {
-    const request = new PaymentRequest(
-      [{ supportedMethods: 'https://apple.com/apple-pay',
-         data: {
-           version: 3,
-           merchantIdentifier: 'merchant.com.brookdalediner',
-           merchantCapabilities: ['supports3DS'],
-           supportedNetworks: ['visa','masterCard','amex','discover'],
-           countryCode: 'US'
-         }
-      }],
-      {
-        total: { label: 'Brookdale Diner', amount: { currency: 'USD', value: '0.01' } },
-        displayItems: []
-      }
-    );
-    const canMake = await request.canMakePayment();
-    if (canMake) {
-      document.getElementById('applepay-fallback').style.display = 'none';
-      document.getElementById('applepay-note').style.display = 'none';
-      const btn = document.createElement('button');
-      btn.className = 'open-btn';
-      btn.style.background = '#000';
-      btn.style.flex = '1';
-      btn.innerHTML = `
-        <svg viewBox="0 0 20 20" fill="white" width="18" height="18">
-          <path d="M10.5 3c-1 1.2-2.6 2-4 2-.2-1.6.6-3.2 1.5-4.3C9.1 .5 10.8-.4 12 -.5c.2 1.7-.4 3.3-1.5 4.5z"/>
-          <path d="M12.5 5.8c-2.2-.1-4.1 1.3-5.2 1.3-1.1 0-2.8-1.2-4.6-1.2C.5 6 -2 7.8 -2 12c0 2.4.8 4.9 1.7 6.5.9 1.4 1.7 2.5 2.9 2.5 1.2 0 1.6-.7 3.1-.7s1.9.7 3.2.7c1.3 0 2.1-1.2 2.9-2.4.8-1.4 1.2-2.7 1.3-2.8-.1 0-2.5-1-2.5-3.7 0-2.3 1.9-3.4 2-3.5-.9-1.4-2.2-1.7-2.8-1.8z"/>
-        </svg>
-        Pay with Apple Pay`;
-      btn.onclick = async () => {
-        try {
-          const pr = new PaymentRequest(
-            [{ supportedMethods: 'https://apple.com/apple-pay',
-               data: {
-                 version: 3,
-                 merchantIdentifier: 'merchant.com.brookdalediner',
-                 merchantCapabilities: ['supports3DS'],
-                 supportedNetworks: ['visa','masterCard','amex','discover'],
-                 countryCode: 'US'
-               }
-            }],
-            { total: { label: 'Brookdale Diner', amount: { currency: 'USD', value: '0.00' } } }
-          );
-          await pr.show();
-        } catch(e) { /* dismissed */ }
-      };
-      document.getElementById('applepay-body').appendChild(btn);
-    }
-  } catch(e) { /* not supported */ }
-})();
+setup('z-handle','z-btn','card-z', z, z ? `tel:${z.replace(/\D/g,'')}` : '#');
+setup('v-handle','v-btn','card-v', v ? '@'+v : '', v ? `venmo://paycharge?txn=pay&recipients=${v}` : '#');
+setup('c-handle','c-btn','card-c', c ? '$'+c : '', c ? `https://cash.app/$${c}` : '#');
 </script>
 </body>
 </html>

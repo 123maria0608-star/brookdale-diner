@@ -11,11 +11,11 @@
 :root{
   --bg:#FFF8F0; --white:#fff;
   --red:#DC2626; --red-deep:#B91C1C;
-  --black:#0A0A0A; --ink:#1f1a18;
-  --grey:#6b6360; --line:#e5dfd6;
+  --black:#0A0A0A; --ink:#1f1a18; --grey:#6b6360; --line:#e5dfd6;
+  --zelle:#6b21a8; --venmo:#3d95ce; --cashapp:#00a827;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Karla',system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:17px;-webkit-font-smoothing:antialiased;min-height:100vh}
+body{font-family:'Karla',system-ui,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased}
 button{font-family:inherit;cursor:pointer}
 input{font-family:inherit}
 
@@ -25,13 +25,13 @@ input{font-family:inherit}
   align-items:center;justify-content:center;
   padding:32px 20px;text-align:center;background:var(--black);
 }
-#lock .logo{font-family:'Abril Fatface',serif;font-size:40px;color:var(--red);margin-bottom:4px}
-#lock .sub{font-family:'Playfair Display SC',serif;font-weight:700;font-size:10px;letter-spacing:4px;color:#666;text-transform:uppercase;margin-bottom:36px}
+#lock .logo{font-family:'Abril Fatface',serif;font-size:38px;color:var(--red);margin-bottom:4px}
+#lock .sub{font-family:'Playfair Display SC',serif;font-weight:700;font-size:10px;letter-spacing:4px;color:#555;text-transform:uppercase;margin-bottom:32px}
 #lock .card{
-  background:var(--white);border-radius:18px;padding:34px 28px;
-  width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.4);
+  background:var(--white);border-radius:18px;padding:32px 28px;
+  width:100%;max-width:340px;box-shadow:0 20px 60px rgba(0,0,0,.5);
 }
-#lock .card h2{font-family:'Playfair Display SC',serif;font-weight:900;font-size:17px;letter-spacing:2px;margin-bottom:20px}
+#lock .card h2{font-family:'Playfair Display SC',serif;font-weight:900;font-size:16px;letter-spacing:2px;margin-bottom:18px}
 #lock input{
   width:100%;padding:14px;border:2px solid var(--line);border-radius:10px;
   font-size:22px;letter-spacing:8px;text-align:center;color:var(--ink);
@@ -39,83 +39,132 @@ input{font-family:inherit}
 }
 #lock input:focus{outline:none;border-color:var(--red)}
 #lock .btn{
-  width:100%;padding:15px;background:var(--red);color:#fff;
+  width:100%;padding:14px;background:var(--red);color:#fff;
   border:none;border-radius:10px;
   font-family:'Playfair Display SC',serif;font-weight:700;
-  font-size:14px;letter-spacing:3px;text-transform:uppercase;
+  font-size:14px;letter-spacing:3px;text-transform:uppercase;transition:background .2s;
 }
 #lock .btn:hover{background:var(--red-deep)}
 #lock .err{color:var(--red);font-size:13px;font-weight:700;margin-top:10px;display:none}
 
 /* ── ADMIN ── */
-#admin{display:none;max-width:480px;margin:0 auto;padding:40px 24px 60px}
+#admin{display:none;max-width:500px;margin:0 auto;padding:36px 22px 60px}
 
-.admin-logo{text-align:center;margin-bottom:32px}
-.admin-logo .name{font-family:'Abril Fatface',serif;font-size:30px;color:var(--red)}
+.admin-logo{text-align:center;margin-bottom:28px}
+.admin-logo .name{font-family:'Abril Fatface',serif;font-size:28px;color:var(--red)}
 .admin-logo .tag{font-family:'Playfair Display SC',serif;font-weight:700;font-size:10px;letter-spacing:4px;color:var(--grey);text-transform:uppercase;margin-top:2px}
 
-.field{margin-bottom:16px}
-.field label{display:block;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--grey);margin-bottom:6px}
-.field input{
-  width:100%;padding:14px 16px;border:2px solid var(--line);border-radius:10px;
-  font-size:17px;color:var(--ink);background:var(--white);transition:border-color .2s;
+.section-head{
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:11px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--red);margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
 }
-.field input:focus{outline:none;border-color:var(--red)}
-.field .hint{font-size:13px;color:var(--grey);margin-top:5px}
+.section-head::after{content:'';height:1px;background:var(--line);flex:1}
+
+/* handle input rows */
+.handle-row{
+  display:flex;align-items:center;gap:10px;margin-bottom:12px;
+  background:var(--white);border:2px solid var(--line);
+  border-radius:12px;padding:14px 16px;
+  transition:border-color .2s;
+}
+.handle-row:focus-within{border-color:var(--red)}
+.handle-row.z{border-left:4px solid var(--zelle)}
+.handle-row.v{border-left:4px solid var(--venmo)}
+.handle-row.c{border-left:4px solid var(--cashapp)}
+
+.handle-icon{
+  width:40px;height:40px;border-radius:10px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display SC',serif;font-weight:900;
+  font-size:16px;color:#fff;
+}
+.hi-z{background:var(--zelle)}
+.hi-v{background:var(--venmo)}
+.hi-c{background:var(--cashapp)}
+
+.handle-field{flex:1}
+.handle-field label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey);margin-bottom:3px}
+.handle-field input{
+  width:100%;border:none;background:none;font-size:16px;font-weight:700;color:var(--ink);
+  padding:0;
+}
+.handle-field input:focus{outline:none}
+.handle-field input::placeholder{color:#ccc;font-weight:400}
+
+.site-field{margin-bottom:20px}
+.site-field label{display:block;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey);margin-bottom:6px}
+.site-field input{
+  width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:10px;
+  font-size:13px;color:var(--ink);background:var(--white);transition:border-color .2s;
+}
+.site-field input:focus{outline:none;border-color:var(--red)}
 
 .gen-btn{
-  width:100%;padding:18px;background:var(--red);color:#fff;
+  width:100%;padding:17px;background:var(--red);color:#fff;
   border:none;border-radius:12px;
   font-family:'Playfair Display SC',serif;font-weight:700;
   font-size:15px;letter-spacing:3px;text-transform:uppercase;
-  margin-top:8px;transition:background .2s,transform .1s;
+  transition:background .2s,transform .1s;margin-top:4px;
 }
 .gen-btn:hover{background:var(--red-deep)}
 .gen-btn:active{transform:scale(.98)}
 
-/* ── QR OUTPUT ── */
-#output{display:none;margin-top:36px}
+/* ── QR CARD ── */
+#output{display:none;margin-top:32px}
 
-.qr-result{
+.qr-card{
   background:var(--white);border:3px solid var(--black);
   border-radius:18px;overflow:hidden;text-align:center;
 }
-.qr-result .top{background:var(--black);padding:16px}
-.qr-result .top .dn{font-family:'Abril Fatface',serif;font-size:22px;color:var(--red)}
-.qr-result .top .ds{font-family:'Playfair Display SC',serif;font-weight:700;font-size:9px;letter-spacing:3px;color:#777;text-transform:uppercase;margin-top:2px}
+.qr-card .top{background:var(--black);padding:14px 16px}
+.qr-card .top .dn{font-family:'Abril Fatface',serif;font-size:22px;color:var(--red)}
+.qr-card .top .ds{font-family:'Playfair Display SC',serif;font-weight:700;font-size:8px;letter-spacing:3px;color:#666;text-transform:uppercase;margin-top:2px}
 
-.qr-result .mid{padding:22px;display:flex;flex-direction:column;align-items:center;gap:12px}
-.qr-result .scan-lbl{font-family:'Playfair Display SC',serif;font-weight:700;font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--grey)}
-.qr-result .qr-box{padding:8px;border:2px solid var(--line);border-radius:10px;display:inline-flex}
-.qr-result .qr-box canvas,.qr-result .qr-box img{display:block;width:200px!important;height:200px!important}
+.qr-card .mid{padding:20px 16px 14px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.qr-card .scan-lbl{font-family:'Playfair Display SC',serif;font-weight:700;font-size:9px;letter-spacing:5px;text-transform:uppercase;color:var(--grey)}
+.qr-card .qr-box{padding:8px;border:2px solid var(--line);border-radius:10px;display:inline-flex}
+.qr-card .qr-box canvas,.qr-card .qr-box img{display:block;width:180px!important;height:180px!important}
 
-.qr-result .bot{background:var(--red);padding:14px 16px}
-.qr-result .bot .pl{font-family:'Playfair Display SC',serif;font-weight:700;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.65)}
-.qr-result .bot .ph{font-family:'Abril Fatface',serif;font-size:26px;color:#fff;letter-spacing:1px;word-break:break-all}
-.qr-result .bot .ps{font-size:11px;color:rgba(255,255,255,.7);margin-top:2px;font-weight:700;letter-spacing:1px}
+/* handles shown on printed card */
+.qr-card .handles{
+  width:100%;border-top:2px solid var(--line);
+  display:grid;grid-template-columns:repeat(3,1fr);
+}
+.qr-card .h-col{padding:12px 8px;text-align:center;border-right:1px solid var(--line)}
+.qr-card .h-col:last-child{border-right:none}
+.qr-card .h-label{font-family:'Playfair Display SC',serif;font-weight:700;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.qr-card .h-label.z{color:var(--zelle)}
+.qr-card .h-label.v{color:var(--venmo)}
+.qr-card .h-label.c{color:var(--cashapp)}
+.qr-card .h-val{font-size:12px;font-weight:700;color:var(--ink);word-break:break-all;line-height:1.3}
+.qr-card .h-val.none{color:#ccc;font-style:italic;font-weight:400}
+
+.qr-card .bot{background:var(--red);padding:10px 16px;text-align:center}
+.qr-card .bot p{font-size:11px;color:rgba(255,255,255,.8);font-weight:700;letter-spacing:1px}
 
 .print-btn{
-  width:100%;padding:17px;background:var(--black);color:#fff;
+  width:100%;padding:16px;background:var(--black);color:#fff;
   border:none;border-radius:12px;
   font-family:'Playfair Display SC',serif;font-weight:700;
   font-size:15px;letter-spacing:3px;text-transform:uppercase;
-  margin-top:14px;transition:background .2s;
+  margin-top:12px;transition:background .2s;
 }
 .print-btn:hover{background:#333}
 
-.url-hint{
-  margin-top:12px;padding:12px 16px;
+.url-out{
+  margin-top:10px;padding:10px 14px;
   background:var(--white);border:1px solid var(--line);border-radius:8px;
-  font-size:12px;color:var(--grey);word-break:break-all;text-align:center;
+  font-size:11px;color:var(--grey);word-break:break-all;text-align:center;
 }
 
 /* ── PRINT ── */
 @media print{
-  #lock,#admin .field,.gen-btn,.print-btn,.url-hint,
-  .admin-logo,.field{display:none!important}
+  #lock,#admin>.admin-logo,.section-head,.handle-row,.site-field,.gen-btn,.print-btn,.url-out{display:none!important}
   #admin{display:block!important;max-width:100%;padding:0}
   #output{display:block!important}
-  .qr-result{border-width:2px;max-width:320px;margin:0 auto}
+  .qr-card{max-width:340px;margin:0 auto;border-width:2px}
   body{background:#fff}
   @page{size:letter;margin:.5in}
 }
@@ -126,61 +175,95 @@ input{font-family:inherit}
 <!-- LOCK -->
 <div id="lock">
   <div class="logo">Brookdale Diner</div>
-  <div class="sub">Staff Access</div>
+  <div class="sub">Staff Access Only</div>
   <div class="card">
     <h2>Enter Passcode</h2>
     <input type="password" id="pc" placeholder="••••••••" maxlength="12"
            autocomplete="off" onkeydown="if(event.key==='Enter')unlock()"/>
     <button class="btn" onclick="unlock()">Unlock</button>
-    <div class="err" id="err">Wrong passcode</div>
+    <div class="err" id="err">Wrong passcode — try again</div>
   </div>
 </div>
 
 <!-- ADMIN -->
 <div id="admin">
+
   <div class="admin-logo">
     <div class="name">Brookdale Diner</div>
     <div class="tag">Payment QR Setup</div>
   </div>
 
-  <div class="field">
-    <label>Your Zelle Phone or Email</label>
-    <input type="text" id="zHandle" placeholder="e.g. (831) 555-0100"/>
-    <p class="hint">Customers will send payment to this number/email</p>
+  <div class="section-head">Your Payment Handles</div>
+
+  <div class="handle-row z">
+    <div class="handle-icon hi-z">Z</div>
+    <div class="handle-field">
+      <label>Zelle — Phone or Email</label>
+      <input type="text" id="f-z" placeholder="e.g. (650) 575-3234"/>
+    </div>
   </div>
 
-  <div class="field">
-    <label>Your Name (shows in Zelle)</label>
-    <input type="text" id="zName" placeholder="Brookdale Diner" value="Brookdale Diner"/>
+  <div class="handle-row v">
+    <div class="handle-icon hi-v">V</div>
+    <div class="handle-field">
+      <label>Venmo — @username</label>
+      <input type="text" id="f-v" placeholder="e.g. JrAlvarez  (no @ needed)"/>
+    </div>
   </div>
 
-  <div class="field">
-    <label>Your Site URL (leave blank if printing locally)</label>
-    <input type="text" id="siteUrl" placeholder="https://yoursite.com/pay.html" value="https://123maria0608-star.github.io/brookdale-diner/pay.html"/>
+  <div class="handle-row c">
+    <div class="handle-icon hi-c">$</div>
+    <div class="handle-field">
+      <label>Cash App — $cashtag</label>
+      <input type="text" id="f-c" placeholder="e.g. JrAlvarez  (no $ needed)"/>
+    </div>
+  </div>
+
+  <br>
+  <div class="section-head">Site URL</div>
+
+  <div class="site-field">
+    <label>Pay page URL (already filled in)</label>
+    <input type="text" id="f-url" value="https://123maria0608-star.github.io/brookdale-diner/pay.html"/>
   </div>
 
   <button class="gen-btn" onclick="generate()">Generate QR Code</button>
 
+  <!-- OUTPUT -->
   <div id="output">
-    <div class="qr-result">
+    <div class="qr-card">
       <div class="top">
         <div class="dn">Brookdale Diner</div>
-        <div class="ds">Historic Brookdale Lodge · Brookdale, CA</div>
+        <div class="ds">Historic Brookdale Lodge &middot; Brookdale, CA</div>
       </div>
       <div class="mid">
         <span class="scan-lbl">Scan to Pay</span>
         <div class="qr-box" id="qr-out"></div>
       </div>
+      <!-- handles printed below QR so customers can also type them manually -->
+      <div class="handles">
+        <div class="h-col">
+          <div class="h-label z">Zelle</div>
+          <div class="h-val" id="p-z">—</div>
+        </div>
+        <div class="h-col">
+          <div class="h-label v">Venmo</div>
+          <div class="h-val" id="p-v">—</div>
+        </div>
+        <div class="h-col">
+          <div class="h-label c">Cash App</div>
+          <div class="h-val" id="p-c">—</div>
+        </div>
+      </div>
       <div class="bot">
-        <div class="pl">Send Zelle to</div>
-        <div class="ph" id="qr-label"></div>
-        <div class="ps">Open your bank app → Zelle → send amount</div>
+        <p>Scan QR · Pick your app · Send the amount Jr tells you · Done!</p>
       </div>
     </div>
 
-    <button class="print-btn" onclick="window.print()">Print This QR Code</button>
-    <div class="url-hint" id="url-hint"></div>
+    <button class="print-btn" onclick="window.print()">Print This Card</button>
+    <div class="url-out" id="url-out"></div>
   </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -198,32 +281,46 @@ function unlock() {
 }
 
 function generate() {
-  const handle  = document.getElementById('zHandle').value.trim();
-  const name    = document.getElementById('zName').value.trim() || 'Brookdale Diner';
-  const siteUrl = document.getElementById('siteUrl').value.trim() || 'pay.html';
+  const z   = document.getElementById('f-z').value.trim();
+  const v   = document.getElementById('f-v').value.trim().replace(/^@/,'');
+  const c   = document.getElementById('f-c').value.trim().replace(/^\$/,'');
+  const url = document.getElementById('f-url').value.trim() || 'pay.html';
 
-  if (!handle) {
-    alert('Enter your Zelle phone or email first.');
-    document.getElementById('zHandle').focus();
+  if (!z && !v && !c) {
+    alert('Enter at least one payment handle (Zelle, Venmo, or Cash App).');
     return;
   }
 
-  const sep = siteUrl.includes('?') ? '&' : '?';
-  const url = `${siteUrl}${sep}z=${encodeURIComponent(handle)}&zn=${encodeURIComponent(name)}`;
+  // Build pay URL with handles as params
+  const params = new URLSearchParams();
+  if (z) params.set('z', z);
+  if (v) params.set('v', v);
+  if (c) params.set('c', c);
+  const sep = url.includes('?') ? '&' : '?';
+  const fullUrl = url + sep + params.toString();
 
-  document.getElementById('qr-label').textContent = handle;
-  document.getElementById('url-hint').textContent = url;
-
+  // QR code
   const box = document.getElementById('qr-out');
   box.innerHTML = '';
   try {
-    new QRCode(box, { text: url, width: 200, height: 200,
+    new QRCode(box, { text: fullUrl, width: 180, height: 180,
       colorDark: '#0A0A0A', colorLight: '#FFFFFF',
       correctLevel: QRCode.CorrectLevel.M });
-  } catch(e) { box.textContent = url; }
+  } catch(e) { box.textContent = fullUrl; }
 
+  // Show handles on card
+  const setHandle = (elId, val, prefix) => {
+    const el = document.getElementById(elId);
+    el.textContent = val ? prefix + val : '—';
+    el.className = 'h-val' + (val ? '' : ' none');
+  };
+  setHandle('p-z', z, '');
+  setHandle('p-v', v, '@');
+  setHandle('p-c', c, '$');
+
+  document.getElementById('url-out').textContent = fullUrl;
   document.getElementById('output').style.display = 'block';
-  document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.getElementById('output').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 </script>
 </body>
