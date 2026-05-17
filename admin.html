@@ -19,6 +19,7 @@ body{font-family:'Karla',system-ui,sans-serif;color:var(--ink);background:var(--
 button{font-family:inherit;cursor:pointer}
 input{font-family:inherit}
 
+/* ── LOCK ── */
 #lock{
   min-height:100vh;display:flex;flex-direction:column;
   align-items:center;justify-content:center;
@@ -46,6 +47,7 @@ input{font-family:inherit}
 #lock .btn:hover{background:var(--red-deep)}
 #lock .err{color:var(--red);font-size:13px;font-weight:700;margin-top:10px;display:none}
 
+/* ── ADMIN ── */
 #admin{display:none;max-width:500px;margin:0 auto;padding:36px 22px 60px}
 
 .admin-logo{text-align:center;margin-bottom:28px}
@@ -60,6 +62,7 @@ input{font-family:inherit}
 }
 .section-head::after{content:'';height:1px;background:var(--line);flex:1}
 
+/* handle input rows */
 .handle-row{
   display:flex;align-items:center;gap:10px;margin-bottom:12px;
   background:var(--white);border:2px solid var(--line);
@@ -84,7 +87,8 @@ input{font-family:inherit}
 .handle-field{flex:1}
 .handle-field label{display:block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey);margin-bottom:3px}
 .handle-field input{
-  width:100%;border:none;background:none;font-size:16px;font-weight:700;color:var(--ink);padding:0;
+  width:100%;border:none;background:none;font-size:16px;font-weight:700;color:var(--ink);
+  padding:0;
 }
 .handle-field input:focus{outline:none}
 .handle-field input::placeholder{color:#ccc;font-weight:400}
@@ -107,6 +111,7 @@ input{font-family:inherit}
 .gen-btn:hover{background:var(--red-deep)}
 .gen-btn:active{transform:scale(.98)}
 
+/* ── QR CARD ── */
 #output{display:none;margin-top:32px}
 
 .qr-card{
@@ -122,6 +127,7 @@ input{font-family:inherit}
 .qr-card .qr-box{padding:8px;border:2px solid var(--line);border-radius:10px;display:inline-flex}
 .qr-card .qr-box canvas,.qr-card .qr-box img{display:block;width:180px!important;height:180px!important}
 
+/* handles shown on printed card */
 .qr-card .handles{
   width:100%;border-top:2px solid var(--line);
   display:grid;grid-template-columns:repeat(3,1fr);
@@ -136,7 +142,7 @@ input{font-family:inherit}
 .qr-card .h-val.none{color:#ccc;font-style:italic;font-weight:400}
 
 .qr-card .bot{background:var(--red);padding:10px 16px;text-align:center}
-.qr-card .bot p{font-size:11px;color:rgba(255,255,255,.85);font-weight:700;letter-spacing:1px}
+.qr-card .bot p{font-size:11px;color:rgba(255,255,255,.8);font-weight:700;letter-spacing:1px}
 
 .print-btn{
   width:100%;padding:16px;background:var(--black);color:#fff;
@@ -147,14 +153,25 @@ input{font-family:inherit}
 }
 .print-btn:hover{background:#333}
 
+.save-btn{
+  width:100%;padding:14px;background:#166534;color:#fff;
+  border:none;border-radius:12px;
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:14px;letter-spacing:3px;text-transform:uppercase;
+  margin-top:10px;transition:background .2s;display:none;
+}
+.save-btn:hover{background:#14532d}
+
 .url-out{
   margin-top:10px;padding:10px 14px;
   background:var(--white);border:1px solid var(--line);border-radius:8px;
   font-size:11px;color:var(--grey);word-break:break-all;text-align:center;
 }
+.url-out a{color:var(--red);font-weight:700;text-decoration:none;display:block;margin-top:6px;font-size:12px;letter-spacing:1px}
 
+/* ── PRINT ── */
 @media print{
-  #lock,#admin>.admin-logo,.section-head,.handle-row,.site-field,.gen-btn,.print-btn,.url-out{display:none!important}
+  #lock,#admin>.admin-logo,.section-head,.handle-row,.site-field,.gen-btn,.print-btn,.save-btn,.url-out{display:none!important}
   #admin{display:block!important;max-width:100%;padding:0}
   #output{display:block!important}
   .qr-card{max-width:340px;margin:0 auto;border-width:2px}
@@ -165,6 +182,7 @@ input{font-family:inherit}
 </head>
 <body>
 
+<!-- LOCK -->
 <div id="lock">
   <div class="logo">Brookdale Diner</div>
   <div class="sub">Staff Access Only</div>
@@ -177,7 +195,9 @@ input{font-family:inherit}
   </div>
 </div>
 
+<!-- ADMIN -->
 <div id="admin">
+
   <div class="admin-logo">
     <div class="name">Brookdale Diner</div>
     <div class="tag">Payment QR Setup</div>
@@ -219,6 +239,7 @@ input{font-family:inherit}
 
   <button class="gen-btn" onclick="generate()">Generate QR Code</button>
 
+  <!-- OUTPUT -->
   <div id="output">
     <div class="qr-card">
       <div class="top">
@@ -229,16 +250,31 @@ input{font-family:inherit}
         <span class="scan-lbl">Scan to Pay</span>
         <div class="qr-box" id="qr-out"></div>
       </div>
+      <!-- handles printed below QR so customers can also type them manually -->
       <div class="handles">
-        <div class="h-col"><div class="h-label z">Zelle</div><div class="h-val" id="p-z">—</div></div>
-        <div class="h-col"><div class="h-label v">Venmo</div><div class="h-val" id="p-v">—</div></div>
-        <div class="h-col"><div class="h-label c">Cash App</div><div class="h-val" id="p-c">—</div></div>
+        <div class="h-col">
+          <div class="h-label z">Zelle</div>
+          <div class="h-val" id="p-z">—</div>
+        </div>
+        <div class="h-col">
+          <div class="h-label v">Venmo</div>
+          <div class="h-val" id="p-v">—</div>
+        </div>
+        <div class="h-col">
+          <div class="h-label c">Cash App</div>
+          <div class="h-val" id="p-c">—</div>
+        </div>
       </div>
-      <div class="bot"><p>Scan QR · Pick your app · Send the amount Jr tells you · Done!</p></div>
+      <div class="bot">
+        <p>Scan QR · Pick your app · Send the amount Jr tells you · Done!</p>
+      </div>
     </div>
+
     <button class="print-btn" onclick="window.print()">Print This Card</button>
+    <button class="save-btn" id="save-btn" onclick="downloadQR()">Save QR as PNG Image</button>
     <div class="url-out" id="url-out"></div>
   </div>
+
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -262,10 +298,11 @@ function generate() {
   const url = document.getElementById('f-url').value.trim() || 'pay.html';
 
   if (!z && !v && !c) {
-    alert('Enter at least one payment handle.');
+    alert('Enter at least one payment handle (Zelle, Venmo, or Cash App).');
     return;
   }
 
+  // Build pay URL with handles as params
   const params = new URLSearchParams();
   if (z) params.set('z', z);
   if (v) params.set('v', v);
@@ -273,26 +310,43 @@ function generate() {
   const sep = url.includes('?') ? '&' : '?';
   const fullUrl = url + sep + params.toString();
 
+  // QR code — error correction H (highest) so it scans even if slightly worn/dirty
   const box = document.getElementById('qr-out');
   box.innerHTML = '';
   try {
     new QRCode(box, { text: fullUrl, width: 180, height: 180,
       colorDark: '#0A0A0A', colorLight: '#FFFFFF',
-      correctLevel: QRCode.CorrectLevel.M });
+      correctLevel: QRCode.CorrectLevel.H });
   } catch(e) { box.textContent = fullUrl; }
 
-  const setH = (elId, val, prefix) => {
+  // Show handles on card
+  const setHandle = (elId, val, prefix) => {
     const el = document.getElementById(elId);
     el.textContent = val ? prefix + val : '—';
     el.className = 'h-val' + (val ? '' : ' none');
   };
-  setH('p-z', z, '');
-  setH('p-v', v, '@');
-  setH('p-c', c, '$');
+  setHandle('p-z', z, '');
+  setHandle('p-v', v, '@');
+  setHandle('p-c', c, '$');
 
-  document.getElementById('url-out').textContent = fullUrl;
+  const urlOut = document.getElementById('url-out');
+  urlOut.innerHTML = fullUrl + `<a href="${fullUrl}" target="_blank" rel="noopener">↗ Test this link (opens pay page)</a>`;
+
+  document.getElementById('save-btn').style.display = 'block';
   document.getElementById('output').style.display = 'block';
   document.getElementById('output').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function downloadQR() {
+  // Give the canvas a moment to fully render, then export as PNG
+  setTimeout(() => {
+    const canvas = document.querySelector('#qr-out canvas');
+    if (!canvas) { alert('QR not ready yet — wait a second and try again.'); return; }
+    const link = document.createElement('a');
+    link.download = 'brookdale-diner-qr.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }, 100);
 }
 </script>
 </body>
