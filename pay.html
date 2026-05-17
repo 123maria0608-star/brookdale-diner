@@ -46,6 +46,7 @@ main{max-width:480px;margin:0 auto;padding:28px 20px 60px}
   color:var(--grey);text-align:center;margin-bottom:18px;
 }
 
+/* ── PAYMENT CARDS ── */
 .pay-card{
   border-radius:16px;overflow:hidden;margin-bottom:14px;
   box-shadow:0 2px 12px rgba(0,0,0,.08);
@@ -89,8 +90,19 @@ main{max-width:480px;margin:0 auto;padding:28px 20px 60px}
 .btn-v{background:var(--venmo)}
 .btn-c{background:var(--cashapp)}
 
-.not-set{opacity:.4;pointer-events:none}
+/* No-handle state */
+.not-set{
+  opacity:.45;pointer-events:none;
+  position:relative;
+}
+.not-set::after{
+  content:'Not set up yet';
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:rgba(0,0,0,.6);color:#fff;padding:6px 14px;border-radius:20px;
+  font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+}
 
+/* ── HOW TO ── */
 .how-box{
   background:var(--white);border:2px solid var(--line);
   border-radius:14px;padding:18px 20px;margin-top:8px;
@@ -125,6 +137,7 @@ footer p{font-size:12px;color:#666}
 <main>
   <p class="section-label">Choose Your Payment Method</p>
 
+  <!-- ZELLE -->
   <div class="pay-card" id="card-z">
     <div class="card-inner z">
       <div class="card-logo logo-z">Z</div>
@@ -137,25 +150,27 @@ footer p{font-size:12px;color:#666}
     <a class="card-btn btn-z" id="z-btn" href="#">Open Bank App / Zelle ›</a>
   </div>
 
+  <!-- VENMO -->
   <div class="pay-card" id="card-v">
     <div class="card-inner v">
       <div class="card-logo logo-v">V</div>
       <div class="card-text">
         <div class="card-name v">Venmo</div>
         <div class="card-handle" id="v-handle">—</div>
-        <div class="card-sub">Open Venmo → search handle → send</div>
+        <div class="card-sub">Open Venmo → search this handle → send</div>
       </div>
     </div>
     <a class="card-btn btn-v" id="v-btn" href="#">Open Venmo ›</a>
   </div>
 
+  <!-- CASH APP -->
   <div class="pay-card" id="card-c">
     <div class="card-inner c">
       <div class="card-logo logo-c">$</div>
       <div class="card-text">
         <div class="card-name c">Cash App</div>
         <div class="card-handle" id="c-handle">—</div>
-        <div class="card-sub">Open Cash App → search $tag → send</div>
+        <div class="card-sub">Open Cash App → search this $tag → send</div>
       </div>
     </div>
     <a class="card-btn btn-c" id="c-btn" href="#">Open Cash App ›</a>
@@ -165,7 +180,7 @@ footer p{font-size:12px;color:#666}
     <h3>How to Pay</h3>
     <ul class="how-steps">
       <li><span class="n">1</span>Tap the payment method you use above</li>
-      <li><span class="n">2</span>Search the handle shown and send the amount Jr told you</li>
+      <li><span class="n">2</span>Search for the handle shown and send the amount Jr told you</li>
       <li><span class="n">3</span>Show Jr the “Payment Sent” screen — that's it!</li>
     </ul>
   </div>
@@ -182,16 +197,37 @@ const z = P.get('z') || '';
 const v = P.get('v') || '';
 const c = P.get('c') || '';
 
-function setup(handleId, btnId, cardId, handle, href) {
+function setup(id, btnId, cardId, handle, href) {
   const card = document.getElementById(cardId);
   if (!handle) { card.classList.add('not-set'); return; }
-  document.getElementById(handleId).textContent = handle;
-  document.getElementById(btnId).href = href;
+  document.getElementById(id).textContent = handle;
+  const btn = document.getElementById(btnId);
+  btn.href = href;
 }
 
-setup('z-handle','z-btn','card-z', z, z ? 'tel:'+z.replace(/\D/g,'') : '#');
-setup('v-handle','v-btn','card-v', v ? '@'+v : '', v ? 'venmo://paycharge?txn=pay&recipients='+v : '#');
-setup('c-handle','c-btn','card-c', c ? '$'+c : '', c ? 'https://cash.app/$'+c : '#');
+setup('v-handle','v-btn','card-v', v ? '@'+v : '', v ? `venmo://paycharge?txn=pay&recipients=${v}` : '#');
+setup('c-handle','c-btn','card-c', c ? '$'+c : '', c ? `https://cash.app/$${c}` : '#');
+
+// Zelle: no universal deep link — copy handle to clipboard instead
+if (z) {
+  document.getElementById('z-handle').textContent = z;
+  const btn = document.getElementById('z-btn');
+  btn.removeAttribute('href');
+  btn.style.cursor = 'pointer';
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    navigator.clipboard.writeText(z).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied! Open your bank → Zelle → paste ✓';
+      setTimeout(() => btn.textContent = orig, 3000);
+    }).catch(() => {
+      btn.textContent = z + ' — type this in your bank app';
+      setTimeout(() => btn.textContent = 'Open Bank App / Zelle ›', 3000);
+    });
+  });
+} else {
+  document.getElementById('card-z').classList.add('not-set');
+}
 </script>
 </body>
 </html>
