@@ -153,15 +153,25 @@ input{font-family:inherit}
 }
 .print-btn:hover{background:#333}
 
+.save-btn{
+  width:100%;padding:14px;background:#166534;color:#fff;
+  border:none;border-radius:12px;
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:14px;letter-spacing:3px;text-transform:uppercase;
+  margin-top:10px;transition:background .2s;display:none;
+}
+.save-btn:hover{background:#14532d}
+
 .url-out{
   margin-top:10px;padding:10px 14px;
   background:var(--white);border:1px solid var(--line);border-radius:8px;
   font-size:11px;color:var(--grey);word-break:break-all;text-align:center;
 }
+.url-out a{color:var(--red);font-weight:700;text-decoration:none;display:block;margin-top:6px;font-size:12px;letter-spacing:1px}
 
 /* ── PRINT ── */
 @media print{
-  #lock,#admin>.admin-logo,.section-head,.handle-row,.site-field,.gen-btn,.print-btn,.url-out{display:none!important}
+  #lock,#admin>.admin-logo,.section-head,.handle-row,.site-field,.gen-btn,.print-btn,.save-btn,.url-out{display:none!important}
   #admin{display:block!important;max-width:100%;padding:0}
   #output{display:block!important}
   .qr-card{max-width:340px;margin:0 auto;border-width:2px}
@@ -261,6 +271,7 @@ input{font-family:inherit}
     </div>
 
     <button class="print-btn" onclick="window.print()">Print This Card</button>
+    <button class="save-btn" id="save-btn" onclick="downloadQR()">Save QR as PNG Image</button>
     <div class="url-out" id="url-out"></div>
   </div>
 
@@ -299,13 +310,13 @@ function generate() {
   const sep = url.includes('?') ? '&' : '?';
   const fullUrl = url + sep + params.toString();
 
-  // QR code
+  // QR code — error correction H (highest) so it scans even if slightly worn/dirty
   const box = document.getElementById('qr-out');
   box.innerHTML = '';
   try {
     new QRCode(box, { text: fullUrl, width: 180, height: 180,
       colorDark: '#0A0A0A', colorLight: '#FFFFFF',
-      correctLevel: QRCode.CorrectLevel.M });
+      correctLevel: QRCode.CorrectLevel.H });
   } catch(e) { box.textContent = fullUrl; }
 
   // Show handles on card
@@ -318,9 +329,24 @@ function generate() {
   setHandle('p-v', v, '@');
   setHandle('p-c', c, '$');
 
-  document.getElementById('url-out').textContent = fullUrl;
+  const urlOut = document.getElementById('url-out');
+  urlOut.innerHTML = fullUrl + `<a href="${fullUrl}" target="_blank" rel="noopener">↗ Test this link (opens pay page)</a>`;
+
+  document.getElementById('save-btn').style.display = 'block';
   document.getElementById('output').style.display = 'block';
   document.getElementById('output').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function downloadQR() {
+  // Give the canvas a moment to fully render, then export as PNG
+  setTimeout(() => {
+    const canvas = document.querySelector('#qr-out canvas');
+    if (!canvas) { alert('QR not ready yet — wait a second and try again.'); return; }
+    const link = document.createElement('a');
+    link.download = 'brookdale-diner-qr.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }, 100);
 }
 </script>
 </body>
