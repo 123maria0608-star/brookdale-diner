@@ -205,9 +205,29 @@ function setup(id, btnId, cardId, handle, href) {
   btn.href = href;
 }
 
-setup('z-handle','z-btn','card-z', z, z ? `tel:${z.replace(/\D/g,'')}` : '#');
 setup('v-handle','v-btn','card-v', v ? '@'+v : '', v ? `venmo://paycharge?txn=pay&recipients=${v}` : '#');
 setup('c-handle','c-btn','card-c', c ? '$'+c : '', c ? `https://cash.app/$${c}` : '#');
+
+// Zelle: no universal deep link — copy handle to clipboard instead
+if (z) {
+  document.getElementById('z-handle').textContent = z;
+  const btn = document.getElementById('z-btn');
+  btn.removeAttribute('href');
+  btn.style.cursor = 'pointer';
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    navigator.clipboard.writeText(z).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied! Open your bank → Zelle → paste ✓';
+      setTimeout(() => btn.textContent = orig, 3000);
+    }).catch(() => {
+      btn.textContent = z + ' — type this in your bank app';
+      setTimeout(() => btn.textContent = 'Open Bank App / Zelle ›', 3000);
+    });
+  });
+} else {
+  document.getElementById('card-z').classList.add('not-set');
+}
 </script>
 </body>
 </html>
