@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Order — Brookdale Diner</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23DC2626'/%3E%3Ctext y='46' x='6' font-size='32' fill='%23fff' font-family='Georgia' font-weight='900'%3EBD%3C/text%3E%3C/svg%3E"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Playfair+Display+SC:wght@700;900&family=Karla:wght@300;400;600;700&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF8F0; --white:#fff; --red:#DC2626; --red-deep:#B91C1C;
+  --red-bright:#EF4444; --black:#0A0A0A; --ink:#1f1a18; --ink-2:#3f3835;
+  --grey:#6b6360; --line:#e5dfd6;
+  --venmo:#3d95ce; --cashapp:#00d632; --zelle:#6b21a8;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Karla',system-ui,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;-webkit-font-smoothing:antialiased;padding-bottom:80px}
+button{font-family:inherit;cursor:pointer}
+input,textarea,select{font-family:inherit}
+::selection{background:var(--red);color:#fff}
+
+/* ── TOP CART BAR ── */
+.cart-bar{
+  position:sticky;top:0;z-index:100;
+  background:var(--black);
+  padding:10px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.cart-bar .diner-name{
+  font-family:'Abril Fatface',serif;font-size:17px;color:var(--red);
+  white-space:nowrap;
+}
+.cart-bar-btn{
+  background:var(--red);color:#fff;border:none;border-radius:30px;
+  padding:10px 20px;font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;white-space:nowrap;
+  transition:background .2s;flex-shrink:0;
+}
+.cart-bar-btn:hover{background:var(--red-deep)}
+.cart-count-badge{
+  background:#fff;color:var(--red);
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;
+}
+
+/* ── HERO ── */
+.hero{
+  background:var(--black);color:#fff;
+  padding:36px 20px 30px;text-align:center;
+  border-bottom:4px solid var(--red);
+  position:relative;overflow:hidden;
+}
+.hero::after{
+  content:'';position:absolute;left:0;right:0;bottom:-2px;height:20px;
+  background-image:
+    linear-gradient(45deg,var(--bg) 25%,transparent 25%),
+    linear-gradient(-45deg,var(--bg) 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,var(--bg) 75%),
+    linear-gradient(-45deg,transparent 75%,var(--bg) 75%);
+  background-size:20px 20px;background-position:0 0,0 10px,10px -10px,10px 0;
+  background-color:var(--black);
+}
+.hero .eyebrow{color:var(--red-bright);letter-spacing:6px;font-size:11px;text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.hero h1{font-family:'Abril Fatface',serif;font-size:clamp(34px,7vw,56px);line-height:1}
+.hero h1 em{font-family:'Caveat',cursive;font-style:normal;color:var(--red-bright)}
+.hero p{margin:10px auto 0;max-width:460px;font-size:14px;color:#d6cdbf}
+
+/* ── CATEGORY PILLS ── */
+.cat-wrap{
+  background:var(--white);border-bottom:2px solid var(--line);
+  padding:12px 16px;position:sticky;top:53px;z-index:90;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  display:flex;gap:8px;scrollbar-width:none;
+}
+.cat-wrap::-webkit-scrollbar{display:none}
+.cat-pill{
+  padding:8px 16px;border-radius:30px;border:2px solid var(--line);
+  background:var(--white);color:var(--ink);font-size:13px;font-weight:700;
+  letter-spacing:1px;white-space:nowrap;transition:all .2s;flex-shrink:0;
+}
+.cat-pill:hover{border-color:var(--red);color:var(--red)}
+.cat-pill.active{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* ── MENU LAYOUT ── */
+.menu-wrap{max-width:800px;margin:0 auto;padding:20px 16px}
+
+.cat-heading{
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:12px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--red);margin:28px 0 12px;
+  display:flex;align-items:center;gap:12px;
+}
+.cat-heading::after{content:'';height:1px;background:var(--line);flex:1}
+.cat-heading:first-child{margin-top:8px}
+
+.sub-heading{
+  font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--grey);margin:20px 0 8px;padding-left:2px;
+}
+
+/* ── ITEM CARD ── */
+.item-card{
+  background:var(--white);border:2px solid var(--line);
+  border-radius:12px;padding:14px 16px;margin-bottom:8px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.item-card:hover{border-color:#d4c9be;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.item-card.in-cart{border-color:var(--red);background:#fff9f9}
+
+.item-info{flex:1;min-width:0}
+.item-name{font-weight:700;font-size:15px;color:var(--ink)}
+.item-desc{font-size:12px;color:var(--grey);margin-top:2px;line-height:1.4}
+.item-price{
+  font-family:'Abril Fatface',serif;font-size:17px;color:var(--ink);
+  margin-top:4px;
+}
+.item-price.free{color:var(--red);font-size:15px;font-family:'Playfair Display SC',serif;font-weight:700;letter-spacing:1px}
+
+.qty-ctrl{
+  display:flex;align-items:center;gap:6px;flex-shrink:0;
+}
+.qty-btn{
+  width:32px;height:32px;border-radius:50%;border:2px solid var(--line);
+  background:var(--white);color:var(--ink);font-size:18px;line-height:1;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.qty-btn.plus{border-color:var(--red);color:var(--red)}
+.qty-btn:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.qty-num{
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:15px;min-width:20px;text-align:center;color:var(--red);
+}
+
+/* ── CART DRAWER ── */
+.cart-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.cart-overlay.open{opacity:1;pointer-events:all}
+
+.cart-drawer{
+  position:fixed;bottom:0;left:0;right:0;
+  z-index:201;
+  background:var(--bg);
+  border-radius:20px 20px 0 0;
+  box-shadow:0 -8px 40px rgba(0,0,0,.2);
+  transform:translateY(100%);transition:transform .35s cubic-bezier(.25,.8,.25,1);
+  display:flex;flex-direction:column;
+  max-height:92vh;
+}
+.cart-drawer.open{transform:translateY(0)}
+
+.drawer-handle{
+  width:40px;height:4px;background:var(--line);
+  border-radius:4px;margin:12px auto 0;flex-shrink:0;
+}
+
+.drawer-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px 10px;flex-shrink:0;
+  border-bottom:2px solid var(--line);
+}
+.drawer-head h2{
+  font-family:'Playfair Display SC',serif;font-weight:900;
+  font-size:18px;letter-spacing:2px;
+}
+.drawer-close{
+  width:32px;height:32px;border-radius:50%;
+  border:2px solid var(--line);background:none;
+  font-size:20px;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.drawer-close:hover{background:var(--red);color:#fff;border-color:var(--red)}
+
+.drawer-body{flex:1;overflow-y:auto;padding:12px 20px}
+
+.cart-empty{
+  text-align:center;padding:40px 20px;color:var(--grey);
+  font-size:15px;
+}
+.cart-empty .icon{font-size:48px;margin-bottom:12px}
+
+.cart-item{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 0;border-bottom:1px solid var(--line);
+}
+.cart-item:last-child{border-bottom:none}
+.ci-name{font-weight:700;font-size:14px}
+.ci-sub{font-size:12px;color:var(--grey)}
+.ci-price{font-family:'Abril Fatface',serif;font-size:15px;flex-shrink:0;color:var(--ink)}
+.ci-remove{
+  background:none;border:none;color:var(--grey);font-size:18px;
+  padding:4px;line-height:1;transition:color .2s;
+}
+.ci-remove:hover{color:var(--red)}
+
+/* ── CART FOOTER ── */
+.drawer-foot{
+  padding:16px 20px;border-top:2px solid var(--line);
+  flex-shrink:0;background:var(--white);
+}
+
+.cart-total-row{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:14px;
+}
+.cart-total-label{font-family:'Playfair Display SC',serif;font-weight:700;font-size:14px;letter-spacing:2px;text-transform:uppercase}
+.cart-total-amt{font-family:'Abril Fatface',serif;font-size:26px;color:var(--red)}
+
+.form-row{margin-bottom:12px}
+.form-row label{display:block;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--grey);margin-bottom:4px}
+.form-row input,.form-row textarea{
+  width:100%;padding:11px 14px;border:2px solid var(--line);border-radius:8px;
+  font-size:15px;color:var(--ink);background:var(--bg);transition:border-color .2s;
+  resize:none;
+}
+.form-row input:focus,.form-row textarea:focus{outline:none;border-color:var(--red)}
+
+/* ── PAYMENT TABS ── */
+.pay-tabs{display:flex;gap:6px;margin-bottom:12px}
+.pay-tab{
+  flex:1;padding:10px 6px;border-radius:8px;
+  border:2px solid var(--line);background:var(--white);
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--ink);transition:all .2s;
+}
+.pay-tab.active-z{background:var(--zelle);color:#fff;border-color:var(--zelle)}
+.pay-tab.active-v{background:var(--venmo);color:#fff;border-color:var(--venmo)}
+.pay-tab.active-c{background:var(--cashapp);color:var(--black);border-color:var(--cashapp)}
+
+.pay-info-box{
+  border-radius:10px;padding:12px 14px;margin-bottom:12px;
+  text-align:center;
+}
+.pay-info-box .send-to{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;opacity:.7}
+.pay-info-box .handle{font-family:'Abril Fatface',serif;font-size:22px;letter-spacing:1px;word-break:break-all}
+.pay-info-box .note{font-size:11px;opacity:.75;margin-top:3px}
+
+.pib-z{background:#f5f0ff;border:1px solid #d8b4fe;color:var(--zelle)}
+.pib-v{background:#dbeafe;border:1px solid #93c5fd;color:var(--venmo)}
+.pib-c{background:#dcfce7;border:1px solid #86efac;color:var(--cashapp)}
+
+.pay-btn{
+  display:block;width:100%;padding:15px;text-align:center;
+  border:none;border-radius:10px;
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:13px;letter-spacing:2px;text-transform:uppercase;
+  color:#fff;text-decoration:none;margin-bottom:10px;
+  transition:opacity .2s,transform .1s;
+}
+.pay-btn:hover{opacity:.9}
+.pay-btn:active{transform:scale(.98)}
+
+.submit-btn{
+  width:100%;padding:15px;border:none;border-radius:10px;
+  background:var(--black);color:#fff;
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:13px;letter-spacing:2px;text-transform:uppercase;
+  transition:background .2s;
+}
+.submit-btn:hover{background:#333}
+.submit-note{font-size:12px;color:var(--grey);text-align:center;margin-top:8px}
+
+/* ── CONFIRMATION OVERLAY ── */
+.confirm-overlay{
+  position:fixed;inset:0;z-index:300;
+  background:var(--black);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px 24px;text-align:center;
+  transform:translateY(100%);transition:transform .4s cubic-bezier(.25,.8,.25,1);
+}
+.confirm-overlay.show{transform:translateY(0)}
+
+.confirm-icon{font-size:72px;margin-bottom:16px}
+.confirm-overlay h2{
+  font-family:'Abril Fatface',serif;font-size:clamp(32px,7vw,52px);
+  color:var(--red);margin-bottom:8px;
+}
+.confirm-overlay .sub{font-size:16px;color:#d6cdbf;margin-bottom:28px;max-width:400px}
+
+.confirm-card{
+  background:var(--white);border-radius:16px;
+  padding:20px 22px;width:100%;max-width:420px;
+  margin-bottom:24px;text-align:left;
+}
+.confirm-card h3{
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:12px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--red);margin-bottom:10px;
+}
+.confirm-items{font-size:14px;color:var(--ink-2);line-height:1.7}
+.confirm-total{
+  font-family:'Abril Fatface',serif;font-size:22px;color:var(--red);
+  margin-top:10px;padding-top:10px;border-top:2px solid var(--line);
+}
+
+.new-order-btn{
+  padding:16px 36px;background:var(--red);color:#fff;
+  border:none;border-radius:40px;
+  font-family:'Playfair Display SC',serif;font-weight:700;
+  font-size:14px;letter-spacing:3px;text-transform:uppercase;
+  transition:background .2s;
+}
+.new-order-btn:hover{background:var(--red-deep)}
+
+@media(min-width:640px){
+  .cart-drawer{max-width:480px;left:auto;right:0;border-radius:20px 0 0 0}
+  .cart-drawer.open{transform:translateY(0)}
+}
+</style>
+</head>
+<body>
+
+<!-- STICKY CART BAR -->
+<div class="cart-bar">
+  <div class="diner-name">Brookdale Diner</div>
+  <button class="cart-bar-btn" onclick="openCart()">
+    <span class="cart-count-badge" id="bar-badge">0</span>
+    View Cart · $<span id="bar-total">0.00</span>
+  </button>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="eyebrow">Patio Ordering</div>
+  <h1>Order <em>Here</em></h1>
+  <p>Pick your items · pay with Zelle, Venmo, or Cash App · we'll bring it out</p>
+</section>
+
+<!-- CATEGORY PILLS -->
+<div class="cat-wrap" id="cat-wrap"></div>
+
+<!-- MENU -->
+<div class="menu-wrap" id="menu-wrap"></div>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart()"></div>
+
+<!-- CART DRAWER -->
+<div class="cart-drawer" id="cart-drawer">
+  <div class="drawer-handle"></div>
+  <div class="drawer-head">
+    <h2>Your Order</h2>
+    <button class="drawer-close" onclick="closeCart()">×</button>
+  </div>
+  <div class="drawer-body" id="drawer-body">
+    <div class="cart-empty" id="cart-empty">
+      <div class="icon">🍔</div>
+      Add items from the menu to get started
+    </div>
+    <div id="cart-items-list"></div>
+  </div>
+  <div class="drawer-foot" id="drawer-foot" style="display:none">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Total</span>
+      <span class="cart-total-amt">$<span id="drawer-total">0.00</span></span>
+    </div>
+
+    <div class="form-row">
+      <label>Your Name</label>
+      <input type="text" id="cust-name" placeholder="e.g. Maria" autocomplete="name"/>
+    </div>
+    <div class="form-row">
+      <label>Special Instructions (optional)</label>
+      <textarea id="cust-notes" rows="2" placeholder="Allergies, modifications..."></textarea>
+    </div>
+
+    <div class="pay-tabs" id="pay-tabs">
+      <!-- built by JS -->
+    </div>
+    <div id="pay-info-box"></div>
+
+    <a class="pay-btn" id="pay-link" href="#" target="_blank" rel="noopener">Pay via Zelle</a>
+    <button class="submit-btn" onclick="submitOrder()">I've Paid — Place Order</button>
+    <p class="submit-note">Tap above after sending payment. We'll start your order right away.</p>
+  </div>
+</div>
+
+<!-- CONFIRMATION OVERLAY -->
+<div class="confirm-overlay" id="confirm-overlay">
+  <div class="confirm-icon">✅</div>
+  <h2>Order Placed!</h2>
+  <p class="sub">Your order is on its way to the kitchen. Show this screen to your server.</p>
+  <div class="confirm-card">
+    <h3>Order Summary</h3>
+    <div class="confirm-items" id="confirm-items"></div>
+    <div class="confirm-total" id="confirm-total"></div>
+  </div>
+  <button class="new-order-btn" onclick="resetOrder()">New Order</button>
+</div>
+
+<script>
+/* ── CONFIG FROM URL ── */
+const P = new URLSearchParams(location.search);
+const CFG = {
+  zelle:   P.get('z')     || '',
+  zelleName: P.get('zn') || 'Brookdale Diner',
+  venmo:   P.get('v')     || '',
+  cashapp: P.get('c')     || '',
+  topic:   P.get('topic') || ''
+};
+
+/* ── MENU DATA ── */
+const CATS = [
+  { id:'breakfast', label:'🍳 Breakfast' },
+  { id:'apps',      label:'🍟 Appetizers' },
+  { id:'salads',    label:'🥗 Salads' },
+  { id:'sandwiches',label:'🥪 Sandwiches' },
+  { id:'burgers',   label:'🍔 Burgers' },
+  { id:'sides',     label:'🍟 Sides' },
+  { id:'desserts',  label:'🍰 Desserts' },
+  { id:'drinks',    label:'☕ Drinks' },
+  { id:'kids',      label:'👶 Kids' },
+  { id:'happyhour', label:'🍺 Happy Hour' },
+];
+
+const MENU = [
+  // CAPONE CLASSICS
+  {id:1,cat:'breakfast',sub:'Capone Classics',name:'Two Eggs',desc:'Any style · hash browns or potatoes · fruit · toast',price:12},
+  {id:2,cat:'breakfast',sub:'Capone Classics',name:'Biscuits & Gravy',desc:'Two biscuits with sausage gravy',price:17},
+  {id:3,cat:'breakfast',sub:'Capone Classics',name:'Avocado Toast',desc:'Two eggs any style · salt & peppered avocado · olive oil',price:15},
+  {id:4,cat:'breakfast',sub:'Capone Classics',name:'Bacon & Eggs',desc:'Two eggs any style · three slices bacon',price:15},
+  {id:5,cat:'breakfast',sub:'Capone Classics',name:'Sausage & Eggs',desc:'Two eggs any style · two links sausage',price:15},
+  {id:6,cat:'breakfast',sub:'Capone Classics',name:'Corned Beef Hash',desc:'With onions · two eggs any style on top',price:17},
+  {id:7,cat:'breakfast',sub:'Capone Classics',name:'Frittata',desc:'Bacon, mushrooms, tomatoes, mozzarella · open-faced',price:18},
+  {id:8,cat:'breakfast',sub:'Capone Classics',name:'Chicken Fried Steak',desc:'Two eggs any style · fried steak · sausage gravy',price:18},
+  // OMELETTES
+  {id:9,cat:'breakfast',sub:'Old School Omelettes',name:'Italian Omelette',desc:'Mushrooms, pesto, mozzarella',price:19},
+  {id:10,cat:'breakfast',sub:'Old School Omelettes',name:'Custom Omelette',desc:'Three-egg with American cheese · note your add-ons',price:15},
+  {id:11,cat:'breakfast',sub:'Old School Omelettes',name:'Ham, Spinach & Tomato',desc:'With Monterey jack cheese',price:18},
+  {id:12,cat:'breakfast',sub:'Old School Omelettes',name:'Bay Shrimp Omelette',desc:'Bay shrimp, white mushrooms, avocado, Swiss cheese',price:18},
+  // SCRAMBLES
+  {id:13,cat:'breakfast',sub:"Dean's Diner Scrambles",name:'Brookdale Scramble',desc:'Spinach, mushrooms, bacon',price:17},
+  {id:14,cat:'breakfast',sub:"Dean's Diner Scrambles",name:"Farmer's Scramble",desc:'Zucchini, bell peppers, onions, mozzarella · V',price:17},
+  {id:15,cat:'breakfast',sub:"Dean's Diner Scrambles",name:'Denver Scramble',desc:'Ham, bacon, sausage, onions, bell peppers, tomato, cheddar',price:17},
+  {id:16,cat:'breakfast',sub:"Dean's Diner Scrambles",name:'Meat Lovers Scramble',desc:'Ham, onions, bell peppers',price:19},
+  {id:17,cat:'breakfast',sub:"Dean's Diner Scrambles",name:'Vegetarian Scramble',desc:'Zucchini, bell peppers, onion, broccoli, feta · V',price:17},
+  {id:18,cat:'breakfast',sub:"Dean's Diner Scrambles",name:'Turkey Avocado Scramble',desc:'Turkey, avocado, spinach, mushroom, mozzarella',price:17},
+  {id:19,cat:'breakfast',sub:"Dean's Diner Scrambles",name:'Chorizo Scramble',desc:'Chorizo and mozzarella',price:18},
+  // BENEDICTS
+  {id:20,cat:'breakfast',sub:'Beatnik Benedicts',name:'Classic Benedict',desc:'Ham, two poached eggs, hollandaise',price:17},
+  {id:21,cat:'breakfast',sub:'Beatnik Benedicts',name:'Vegetarian Benedict',desc:'Zucchini, mushrooms, peppers, two poached eggs, hollandaise · V',price:17},
+  // GRIDDLES
+  {id:22,cat:'breakfast',sub:'Gangster Griddles',name:'Pancakes',desc:'Three per order · Add bacon & two eggs +$6',price:13},
+  {id:23,cat:'breakfast',sub:'Gangster Griddles',name:'Waffles',desc:'Two per order · Add bacon & two eggs +$6',price:12},
+  {id:24,cat:'breakfast',sub:'Gangster Griddles',name:'French Toast',desc:'Three slices · Add bacon & two eggs +$6',price:13},
+  // APPS
+  {id:35,cat:'apps',sub:'Mobster Munchies',name:'Chili Cheese Fries',desc:'Chili and shredded mozzarella',price:13},
+  {id:36,cat:'apps',sub:'Mobster Munchies',name:'Calamari',desc:'In a lemon caper aioli',price:14},
+  {id:37,cat:'apps',sub:'Mobster Munchies',name:'Mozzarella Sticks',desc:'With your choice of side sauce',price:9},
+  {id:38,cat:'apps',sub:'Mobster Munchies',name:'Onion Rings',desc:'Minced garlic and parmesan cheese',price:9},
+  {id:39,cat:'apps',sub:'Mobster Munchies',name:'Garlic Fries',desc:'Minced garlic and parmesan',price:8},
+  {id:40,cat:'apps',sub:'Mobster Munchies',name:'Soup of the Day (Cup)',desc:'Ask server for today\'s soup',price:5},
+  {id:41,cat:'apps',sub:'Mobster Munchies',name:'Soup of the Day (Bowl)',desc:'Ask server for today\'s soup',price:10},
+  // SALADS
+  {id:42,cat:'salads',sub:'Starlet Salads',name:'Garden Salad',desc:'Cucumber, tomato, olives, artichoke, onion, carrot · choice of dressing',price:11},
+  {id:43,cat:'salads',sub:'Starlet Salads',name:'Caesar Salad',desc:'Romaine, croutons, red onions, parmesan, creamy dressing',price:12},
+  {id:44,cat:'salads',sub:'Starlet Salads',name:'Strawberry Salad',desc:'Spring mix, strawberries, walnuts, avocado, goat cheese, balsamic',price:13},
+  // SANDWICHES
+  {id:45,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'Grilled Cheese',desc:'American, cheddar, jack cheese · Texas toast · with fries',price:14},
+  {id:46,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'Grilled Chicken Sandwich',desc:'Chicken breast, chipotle aioli, mushrooms, red onion, spring mix, provolone · brioche · with fries',price:17},
+  {id:47,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'Italian Meatball Sub',desc:'Three house-made meatballs, marinara, provolone · french roll · with fries',price:17},
+  {id:48,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'Philly Cheesesteak',desc:'Roast beef, grilled onions and green peppers · french roll · with fries',price:18},
+  {id:49,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'French Dip',desc:'Roast beef, onions, jack cheese · side of au jus · with fries',price:17},
+  {id:50,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'Veggie Sandwich',desc:'Tomatoes, cucumber, zucchini, red onion, carrots, dill dressing · ciabatta · with fries',price:15},
+  {id:51,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'Reuben',desc:'Corned beef, sauerkraut, Swiss cheese on rye · with fries',price:17},
+  {id:52,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'Monte Cristo',desc:'Ham, turkey, Swiss cheese · egg-battered & deep fried · Texas toast · with fries',price:15},
+  {id:53,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'Patty Melt',desc:'Grilled onion and American cheese on rye · with fries',price:17},
+  {id:54,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'BLT',desc:'Bacon, lettuce, tomato on sourdough · with fries',price:15},
+  {id:55,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'Club Sandwich',desc:'Turkey breast, bacon, lettuce, tomato on sourdough · with fries',price:17},
+  {id:56,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'California Chicken',desc:'Roasted chicken, bacon, avocado, Monterey jack on sourdough · with fries',price:17},
+  {id:57,cat:'sandwiches',sub:'Silver Screen Sandwiches',name:'Tuna Melt',desc:'Tuna salad with American cheese on sourdough · with fries',price:16},
+  // BURGERS
+  {id:58,cat:'burgers',sub:'Legendary Burgers (6oz)',name:'Classic Burger',desc:'Lettuce, onion, tomato, pickle, mayo, cheddar · with fries',price:18},
+  {id:59,cat:'burgers',sub:'Legendary Burgers (6oz)',name:'Creekside Fire',desc:'Mushrooms, jalapeños, provolone · with fries',price:18},
+  {id:60,cat:'burgers',sub:'Legendary Burgers (6oz)',name:'Bacon Avocado Burger',desc:'Bacon, caramelized red onions, avocado, lettuce, pickles, Monterey Jack · with fries',price:18},
+  {id:61,cat:'burgers',sub:'Legendary Burgers (6oz)',name:'Crispy Chicken Burger',desc:'Bacon, lettuce, tomatoes, caramelized onions, pepper jack · with fries',price:17},
+  {id:62,cat:'burgers',sub:'Legendary Burgers (6oz)',name:'Box Office BBQ',desc:'Arugula, bacon, caramelized onions, bbq bourbon jam, smoked mozzarella · with fries',price:18},
+  {id:63,cat:'burgers',sub:'Legendary Burgers (6oz)',name:'The Brookdale Burger',desc:'Grilled pineapple, red onion, tomato, BBQ aioli, Swiss cheese · with fries',price:18},
+  {id:64,cat:'burgers',sub:'Mob Boss Burgers (½ lb)',name:'Marilyn Monroe Melt',desc:'Lettuce, caramelized onions, pickles, sriracha mayo, honey aioli, smoked mozzarella · with fries',price:20},
+  {id:65,cat:'burgers',sub:'Mob Boss Burgers (½ lb)',name:'The Twisted Tale',desc:'Fried egg, arugula, bbq bourbon aioli, Swiss cheese · with fries',price:20},
+  {id:66,cat:'burgers',sub:'Mob Boss Burgers (½ lb)',name:'The Ghost Host',desc:'½ lb burger · with fries · ask server for toppings',price:20},
+  {id:67,cat:'burgers',sub:"Mob Boss Burgers (½ lb)",name:"Jr's Doo-Wop Double",desc:'Double patty (almost a full pound!) with fries',price:22},
+  // SIDES
+  {id:25,cat:'sides',sub:'Breakfast Sides',name:'Bacon',desc:'Three strips',price:4},
+  {id:26,cat:'sides',sub:'Breakfast Sides',name:'Sausage',desc:'Three links',price:4},
+  {id:27,cat:'sides',sub:'Breakfast Sides',name:'Hashbrowns',desc:'',price:5},
+  {id:28,cat:'sides',sub:'Breakfast Sides',name:'House Potatoes',desc:'',price:5},
+  {id:29,cat:'sides',sub:'Breakfast Sides',name:'Avocado Slices',desc:'',price:3},
+  {id:30,cat:'sides',sub:'Breakfast Sides',name:'Toast',desc:'',price:2},
+  {id:31,cat:'sides',sub:'Breakfast Sides',name:'Fruit Bowl',desc:'',price:6},
+  {id:32,cat:'sides',sub:'Breakfast Sides',name:'Cinnamon Roll',desc:'',price:8},
+  {id:105,cat:'sides',sub:'Sides',name:'Steak Fries',desc:'',price:8},
+  {id:106,cat:'sides',sub:'Sides',name:'Sweet Potato Fries',desc:'',price:8},
+  {id:107,cat:'sides',sub:'Sides',name:'French Fries',desc:'',price:7},
+  {id:108,cat:'sides',sub:'Sides',name:'Garlic Fries',desc:'Minced garlic and parmesan',price:10},
+  {id:109,cat:'sides',sub:'Sides',name:'Onion Rings',desc:'',price:9},
+  {id:110,cat:'sides',sub:'Sides',name:'Mac & Cheese',desc:'',price:7},
+  {id:111,cat:'sides',sub:'Sides',name:'Seasonal Vegetables',desc:'',price:5},
+  {id:112,cat:'sides',sub:'Sides',name:'House Salad',desc:'',price:6},
+  // DESSERTS
+  {id:83,cat:'desserts',sub:'Decadent Desserts',name:'Hot Fudge Sundae',desc:'Three scoops vanilla, whip cream, toasted nuts',price:8},
+  {id:84,cat:'desserts',sub:'Decadent Desserts',name:'Milkshake',desc:"Five Marianne's scoops · Vanilla, Chocolate, Strawberry, Cookies & Cream, Coffee",price:10},
+  {id:85,cat:'desserts',sub:'Decadent Desserts',name:'Cheesecake',desc:'Strawberries and caramel drizzle',price:10},
+  {id:86,cat:'desserts',sub:'Decadent Desserts',name:'Root Beer or Orange Float',desc:'',price:6},
+  // DRINKS
+  {id:87,cat:'drinks',sub:'Dreamy Drinks',name:'Fountain Drink',desc:'Coke, Diet Coke, Coke Zero, Fanta, Lemonade, Iced Tea · free refills',price:3},
+  {id:88,cat:'drinks',sub:'Dreamy Drinks',name:'Can Soda',desc:'Dr. Pepper, Sprite, A&W Cream Soda, A&W Root Beer',price:3},
+  {id:89,cat:'drinks',sub:'Dreamy Drinks',name:'Jarritos',desc:'Lime, Guava, Mandarin, Pineapple',price:4},
+  {id:90,cat:'drinks',sub:'Dreamy Drinks',name:'Sparkling Water',desc:'Ferrarelli',price:4},
+  {id:91,cat:'drinks',sub:'Dreamy Drinks',name:'Juice',desc:'Orange, apple, cranberry',price:4},
+  {id:92,cat:'drinks',sub:'Dreamy Drinks',name:'Coffee',desc:'Regular or decaf · free refills',price:3},
+  {id:93,cat:'drinks',sub:'Dreamy Drinks',name:'Hot Tea',desc:'',price:3},
+  {id:94,cat:'drinks',sub:'Dreamy Drinks',name:'Milk',desc:'',price:3},
+  {id:95,cat:'drinks',sub:'Dreamy Drinks',name:'Espresso Shot',desc:'',price:3},
+  {id:96,cat:'drinks',sub:'Dreamy Drinks',name:'Café Latte',desc:'',price:5},
+  {id:97,cat:'drinks',sub:'Dreamy Drinks',name:'Cappuccino',desc:'',price:4},
+  {id:98,cat:'drinks',sub:'Dreamy Drinks',name:'Hot Chocolate',desc:'Whip cream and Hershey\'s syrup',price:5},
+  // KIDS
+  {id:68,cat:'kids',sub:'Ankle Biters (age 8 & under · FREE with adult meal)',name:'Cold Cereal & Milk',desc:'FREE with one adult meal',price:0},
+  {id:69,cat:'kids',sub:'Ankle Biters (age 8 & under · FREE with adult meal)',name:'Grilled Cheese',desc:'FREE with one adult meal',price:0},
+  {id:70,cat:'kids',sub:'Ankle Biters (age 8 & under · FREE with adult meal)',name:'PBJ Sandwich',desc:'With chips · FREE with one adult meal',price:0},
+  {id:71,cat:'kids',sub:'Ankle Biters (age 8 & under · FREE with adult meal)',name:'Scrambled Eggs',desc:'With cheese · FREE with one adult meal',price:0},
+  {id:72,cat:'kids',sub:'Ankle Biters (age 8 & under · FREE with adult meal)',name:'Mac & Cheese (kids)',desc:'FREE with one adult meal',price:0},
+  {id:73,cat:'kids',sub:'Ankle Biters (age 8 & under · FREE with adult meal)',name:'One Pancake',desc:'With chocolate chips · FREE with one adult meal',price:0},
+  {id:74,cat:'kids',sub:'Ankle Biters (age 8 & under · FREE with adult meal)',name:'Pasta with Butter',desc:'FREE with one adult meal',price:0},
+  {id:75,cat:'kids',sub:'Peepers Menu (ages 9–12)',name:'Chicken Tenders',desc:'With French fries',price:10},
+  {id:76,cat:'kids',sub:'Peepers Menu (ages 9–12)',name:'Small Grilled Chicken',desc:'With broccoli',price:10},
+  {id:77,cat:'kids',sub:'Peepers Menu (ages 9–12)',name:'Cheese Pizza',desc:'Add pepperoni +$2',price:10},
+  {id:78,cat:'kids',sub:'Peepers Menu (ages 9–12)',name:'Two Mini Cheese Sandwiches',desc:'With fries',price:10},
+  {id:79,cat:'kids',sub:'Peepers Menu (ages 9–12)',name:'Two Scoops of Meatloaf',desc:'With mashed potatoes',price:10},
+  {id:80,cat:'kids',sub:'Peepers Menu (ages 9–12)',name:'Half Garden Salad (kids)',desc:'With ranch',price:10},
+  {id:81,cat:'kids',sub:'Peepers Menu (ages 9–12)',name:'Half Caesar Salad (kids)',desc:'With fries',price:10},
+  {id:82,cat:'kids',sub:'Peepers Menu (ages 9–12)',name:'Grilled Ham & Cheese',desc:'With fries',price:10},
+  // HAPPY HOUR
+  {id:99,cat:'happyhour',sub:'Swanky Happy Hour · 2–6pm Wed–Mon',name:'Vixen Chicken Wings',desc:'',price:9},
+  {id:100,cat:'happyhour',sub:'Swanky Happy Hour · 2–6pm Wed–Mon',name:'Star Struck Pork Ribs',desc:'',price:10},
+  {id:101,cat:'happyhour',sub:'Swanky Happy Hour · 2–6pm Wed–Mon',name:'Glam Garlic Fries',desc:'',price:8},
+  {id:102,cat:'happyhour',sub:'Swanky Happy Hour · 2–6pm Wed–Mon',name:'Cloud 9 Meatballs',desc:'',price:10},
+  {id:103,cat:'happyhour',sub:'Swanky Happy Hour · 2–6pm Wed–Mon',name:'Cousin Chicken Tenders',desc:'',price:7},
+  {id:104,cat:'happyhour',sub:'Swanky Happy Hour · 2–6pm Wed–Mon',name:'Rock n\' Roll Mini Street Tacos',desc:'',price:8},
+];
+
+/* ── STATE ── */
+const cart = {}; // id → qty
+let activeCat = 'all';
+let activePay = CFG.zelle ? 'zelle' : (CFG.venmo ? 'venmo' : (CFG.cashapp ? 'cashapp' : 'zelle'));
+
+/* ── RENDER CATEGORIES ── */
+function renderCats() {
+  const wrap = document.getElementById('cat-wrap');
+  const all = document.createElement('button');
+  all.className = 'cat-pill active';
+  all.textContent = 'All';
+  all.onclick = () => filterCat('all', all);
+  wrap.appendChild(all);
+  CATS.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'cat-pill';
+    btn.textContent = c.label;
+    btn.onclick = () => filterCat(c.id, btn);
+    wrap.appendChild(btn);
+  });
+}
+
+function filterCat(cat, btn) {
+  activeCat = cat;
+  document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('.cat-section').forEach(s => {
+    s.style.display = (cat === 'all' || s.dataset.cat === cat) ? '' : 'none';
+  });
+  // scroll to section if specific cat
+  if (cat !== 'all') {
+    const s = document.querySelector(`.cat-section[data-cat="${cat}"]`);
+    if (s) s.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+}
+
+/* ── RENDER MENU ── */
+function renderMenu() {
+  const wrap = document.getElementById('menu-wrap');
+  const grouped = {};
+  MENU.forEach(item => {
+    if (!grouped[item.cat]) grouped[item.cat] = {};
+    if (!grouped[item.cat][item.sub]) grouped[item.cat][item.sub] = [];
+    grouped[item.cat][item.sub].push(item);
+  });
+
+  CATS.forEach(cat => {
+    if (!grouped[cat.id]) return;
+    const sec = document.createElement('div');
+    sec.className = 'cat-section';
+    sec.dataset.cat = cat.id;
+
+    const h = document.createElement('div');
+    h.className = 'cat-heading';
+    h.textContent = cat.label;
+    sec.appendChild(h);
+
+    Object.entries(grouped[cat.id]).forEach(([sub, items]) => {
+      const sh = document.createElement('div');
+      sh.className = 'sub-heading';
+      sh.textContent = sub;
+      sec.appendChild(sh);
+
+      items.forEach(item => {
+        sec.appendChild(makeItemCard(item));
+      });
+    });
+
+    wrap.appendChild(sec);
+  });
+}
+
+function makeItemCard(item) {
+  const div = document.createElement('div');
+  div.className = 'item-card';
+  div.id = `item-${item.id}`;
+
+  const info = document.createElement('div');
+  info.className = 'item-info';
+  info.innerHTML = `
+    <div class="item-name">${item.name}</div>
+    ${item.desc ? `<div class="item-desc">${item.desc}</div>` : ''}
+    <div class="item-price ${item.price===0?'free':''}">${item.price===0?'FREE':'$'+item.price}</div>
+  `;
+
+  const ctrl = document.createElement('div');
+  ctrl.className = 'qty-ctrl';
+
+  const minus = document.createElement('button');
+  minus.className = 'qty-btn minus';
+  minus.textContent = '−';
+  minus.onclick = () => changeQty(item, -1);
+
+  const num = document.createElement('span');
+  num.className = 'qty-num';
+  num.id = `qty-${item.id}`;
+  num.textContent = '0';
+  num.style.display = 'none';
+
+  const plus = document.createElement('button');
+  plus.className = 'qty-btn plus';
+  plus.textContent = '+';
+  plus.onclick = () => changeQty(item, 1);
+
+  minus.style.display = 'none';
+  ctrl.appendChild(minus);
+  ctrl.appendChild(num);
+  ctrl.appendChild(plus);
+
+  div.appendChild(info);
+  div.appendChild(ctrl);
+  return div;
+}
+
+/* ── CART LOGIC ── */
+function changeQty(item, delta) {
+  const cur = cart[item.id]?.qty || 0;
+  const nxt = Math.max(0, cur + delta);
+
+  if (nxt === 0) delete cart[item.id];
+  else cart[item.id] = { ...item, qty: nxt };
+
+  const card = document.getElementById(`item-${item.id}`);
+  const qtyEl = document.getElementById(`qty-${item.id}`);
+  const minusBtn = card.querySelector('.minus');
+
+  qtyEl.textContent = nxt;
+  qtyEl.style.display = nxt > 0 ? 'block' : 'none';
+  minusBtn.style.display = nxt > 0 ? 'flex' : 'none';
+  card.classList.toggle('in-cart', nxt > 0);
+
+  updateBar();
+}
+
+function getTotal() {
+  return Object.values(cart).reduce((s, i) => s + i.price * i.qty, 0);
+}
+function getCount() {
+  return Object.values(cart).reduce((s, i) => s + i.qty, 0);
+}
+
+function updateBar() {
+  const count = getCount();
+  const total = getTotal();
+  document.getElementById('bar-badge').textContent = count;
+  document.getElementById('bar-total').textContent = total.toFixed(2);
+}
+
+/* ── CART DRAWER ── */
+function openCart() {
+  document.getElementById('cart-overlay').classList.add('open');
+  document.getElementById('cart-drawer').classList.add('open');
+  renderCartDrawer();
+}
+function closeCart() {
+  document.getElementById('cart-overlay').classList.remove('open');
+  document.getElementById('cart-drawer').classList.remove('open');
+}
+
+function renderCartDrawer() {
+  const items = Object.values(cart);
+  const empty = document.getElementById('cart-empty');
+  const list  = document.getElementById('cart-items-list');
+  const foot  = document.getElementById('drawer-foot');
+
+  if (items.length === 0) {
+    empty.style.display = 'block';
+    list.innerHTML = '';
+    foot.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  foot.style.display = 'block';
+
+  list.innerHTML = items.map(i => `
+    <div class="cart-item">
+      <div style="flex:1">
+        <div class="ci-name">${i.qty}× ${i.name}</div>
+        <div class="ci-sub">${i.price === 0 ? 'FREE' : '$' + i.price + ' each'}</div>
+      </div>
+      <div class="ci-price">${i.price === 0 ? 'FREE' : '$' + (i.price * i.qty).toFixed(2)}</div>
+      <button class="ci-remove" onclick="removeItem(${i.id})">×</button>
+    </div>
+  `).join('');
+
+  document.getElementById('drawer-total').textContent = getTotal().toFixed(2);
+  renderPayTabs();
+  updatePayInfo();
+  updatePayBtn();
+}
+
+function removeItem(id) {
+  if (!cart[id]) return;
+  const item = cart[id];
+  delete cart[id];
+  // update card
+  const card = document.getElementById(`item-${item.id}`);
+  if (card) {
+    document.getElementById(`qty-${item.id}`).style.display = 'none';
+    card.querySelector('.minus').style.display = 'none';
+    document.getElementById(`qty-${item.id}`).textContent = '0';
+    card.classList.remove('in-cart');
+  }
+  updateBar();
+  renderCartDrawer();
+}
+
+/* ── PAYMENT ── */
+function renderPayTabs() {
+  const methods = [];
+  if (CFG.zelle)   methods.push({ id:'zelle',   label:'Zelle' });
+  if (CFG.venmo)   methods.push({ id:'venmo',   label:'Venmo' });
+  if (CFG.cashapp) methods.push({ id:'cashapp', label:'Cash App' });
+  if (!methods.length) methods.push({ id:'zelle', label:'Zelle' });
+
+  document.getElementById('pay-tabs').innerHTML = methods.map(m => `
+    <button class="pay-tab ${activePay===m.id?'active-'+m.id:''}"
+            onclick="selectPay('${m.id}')">${m.label}</button>
+  `).join('');
+}
+
+function selectPay(method) {
+  activePay = method;
+  renderPayTabs();
+  updatePayInfo();
+  updatePayBtn();
+}
+
+function updatePayInfo() {
+  const box = document.getElementById('pay-info-box');
+  const total = getTotal().toFixed(2);
+
+  const data = {
+    zelle:   { cls:'pib-z', label:'Send Zelle to', handle: CFG.zelle   || '—', note:'Open your bank app → Zelle' },
+    venmo:   { cls:'pib-v', label:'Send Venmo to', handle: '@'+(CFG.venmo||'—'), note:'Open Venmo app' },
+    cashapp: { cls:'pib-c', label:'Send Cash App to', handle: '$'+(CFG.cashapp||'—'), note:'Open Cash App' },
+  }[activePay] || {};
+
+  box.innerHTML = `
+    <div class="pay-info-box ${data.cls}">
+      <div class="send-to">${data.label}</div>
+      <div class="handle">${data.handle}</div>
+      <div class="note">Amount: <strong>$${total}</strong> · ${data.note}</div>
+    </div>`;
+}
+
+function updatePayBtn() {
+  const btn  = document.getElementById('pay-link');
+  const total = getTotal().toFixed(2);
+  const note  = encodeURIComponent('Brookdale Diner Order');
+  const colors = { zelle:'#6b21a8', venmo:'#3d95ce', cashapp:'#00a827' };
+
+  btn.style.background = colors[activePay] || colors.zelle;
+  btn.textContent = `Pay $${total} via ${activePay === 'cashapp' ? 'Cash App' : activePay.charAt(0).toUpperCase()+activePay.slice(1)}`;
+
+  if (activePay === 'venmo' && CFG.venmo) {
+    btn.href = `venmo://paycharge?txn=pay&recipients=${CFG.venmo}&amount=${total}&note=${note}`;
+  } else if (activePay === 'cashapp' && CFG.cashapp) {
+    btn.href = `https://cash.app/$${CFG.cashapp}`;
+  } else {
+    // Zelle — no standard deep link, just show number
+    btn.href = CFG.zelle ? `tel:${CFG.zelle.replace(/\D/g,'')}` : '#';
+    if (!CFG.zelle) btn.textContent = 'See Zelle number above';
+  }
+}
+
+/* ── SUBMIT ORDER ── */
+async function submitOrder() {
+  const name  = document.getElementById('cust-name').value.trim() || 'Guest';
+  const notes = document.getElementById('cust-notes').value.trim();
+  const items = Object.values(cart);
+
+  if (items.length === 0) { alert('Add some items first!'); return; }
+  if (!document.getElementById('cust-name').value.trim()) {
+    alert('Please enter your name so we know the order is for you.');
+    document.getElementById('cust-name').focus();
+    return;
+  }
+
+  const total = getTotal().toFixed(2);
+  const itemLines = items.map(i => `${i.qty}x ${i.name} — $${(i.price*i.qty).toFixed(2)}`).join('\n');
+  const payMethod = activePay === 'cashapp' ? 'Cash App' : activePay.charAt(0).toUpperCase()+activePay.slice(1);
+  const payHandle = activePay==='zelle' ? CFG.zelle : activePay==='venmo' ? '@'+CFG.venmo : '$'+CFG.cashapp;
+
+  // ntfy.sh notification to owner
+  if (CFG.topic) {
+    try {
+      await fetch(`https://ntfy.sh/${CFG.topic}`, {
+        method: 'POST',
+        body: `Customer: ${name}\nPayment: ${payMethod} ${payHandle} — $${total}\n\n${itemLines}${notes ? '\n\nNotes: '+notes : ''}`,
+        headers: {
+          'Title': `🍔 New Order — $${total}`,
+          'Priority': 'high',
+          'Tags': 'bell,hamburger'
+        }
+      });
+    } catch(e) { /* offline — order still shows locally */ }
+  }
+
+  // Show confirmation
+  document.getElementById('confirm-items').innerHTML =
+    items.map(i => `${i.qty}× ${i.name}${i.price===0?' (FREE)':' — $'+(i.price*i.qty).toFixed(2)}`).join('<br>') +
+    (notes ? `<br><br><em>Notes: ${notes}</em>` : '');
+  document.getElementById('confirm-total').textContent = `Total: $${total} — paid via ${payMethod}`;
+
+  closeCart();
+  document.getElementById('confirm-overlay').classList.add('show');
+}
+
+function resetOrder() {
+  Object.keys(cart).forEach(id => {
+    const item = cart[id];
+    const card = document.getElementById(`item-${id}`);
+    if (card) {
+      document.getElementById(`qty-${id}`).style.display = 'none';
+      card.querySelector('.minus').style.display = 'none';
+      document.getElementById(`qty-${id}`).textContent = '0';
+      card.classList.remove('in-cart');
+    }
+    delete cart[id];
+  });
+  updateBar();
+  document.getElementById('confirm-overlay').classList.remove('show');
+  document.getElementById('cust-name').value = '';
+  document.getElementById('cust-notes').value = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── INIT ── */
+renderCats();
+renderMenu();
+updateBar();
+</script>
+</body>
+</html>
